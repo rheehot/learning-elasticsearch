@@ -43,14 +43,15 @@ API 요청 구조 = (메서드) (인덱스)/(타입)/(문서id) {json 데이터}
 ### 문서 색인 및 조회
 * 문서를 색인하는 방법
     * PUT 메소드를 사용  
-    ex) `PUT twitter/_doc/1 {"user" : "kimchy","post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  
-    ex) `PUT twitter/_doc/1/_create {"user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  
+    ex) `PUT twitter/_doc/1 {"user" : "kimchy","post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  문서 1번으로 인덱싱  
+    ex) `PUT twitter/_doc/1/_create {"user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  id가 없을 때만 인덱싱  
+    ex) `PUT twitter/_doc/?op_type=create {"user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  id가 없을 때만 인덱싱  
     * POST 메소드를 사용  
     ex) `POST twitter/_doc {"user" : "kimchy","post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}`  
 * 문서를 조회하는 방법
     * GET 메소드를 사용  
-    ex) `GET twitter/_doc/1`  
-    ex) `GET twitter/_source/1`
+    ex) `GET twitter/_doc/1` id 1번 문서 조회  
+    ex) `GET twitter/_source/1` 실제 문서 데이터인 _source만 조회
 
 ### 문서 갱신 및 삭제
 * 문서를 갱신하는 방법
@@ -63,8 +64,8 @@ API 요청 구조 = (메서드) (인덱스)/(타입)/(문서id) {json 데이터}
 ### 클러스터 정보 확인
 * 클러스터 상태 정보를 확인하는 방법
     * GET 메소드를 사용  
-    ex) `GET _cluster/health`  
-    ex) `GET _cluster/settings`
+    ex) `GET _cluster/health` 클러스터 health 확인  
+    ex) `GET _cluster/settings` 클러스터 setting 확인
 
 ### ES 플러그인
 * 플러그인은 ES 기능을 커스텀 설정에 의해 좀 더 강화하여 사용하는 방법으로 플러그인을 로딩하려면 `클러스터 재시작`이 필요
@@ -76,6 +77,4 @@ API 요청 구조 = (메서드) (인덱스)/(타입)/(문서id) {json 데이터}
 * HQ 플러그인 - 한눈에 클러스터의 사용률을 보기 위한 도구로 접속 포트 5000번 사용
 
 ### 보충
-*
-*
-*
+* ES 7부터는 일부 명령어에서 type(_doc)을 생략하는 것이 디폴트로 되어 있음
