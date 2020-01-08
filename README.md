@@ -1,5 +1,5 @@
-# ElasticSearch 온보딩 교육 정리 자료
-benjamin.butn의 튜토리얼 및 강의 자료 와 엘라스틱서치 실무 가이드(권택환 외 5인)를 정리하여 만들었습니다.
+# ElasticSearch 정리 자료
+엘라스틱서치의 튜토리얼 및 강의 자료 와 엘라스틱서치 실무 가이드(권택환 외 5인)를 정리하여 만들었습니다.
 
 ##### ElasticSearch version: 6.7.0
 
