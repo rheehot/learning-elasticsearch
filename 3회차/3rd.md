@@ -10,7 +10,7 @@
   * 클러스터에 API로 호출
   * 클러스터 단위로 설정
 
-### `elasticsearch.yml` 파일 환경 설정
+### `elasticsearch.yml` 파일 환경 설정(Static settings)
 * `cluster.name`: 클러스터를 고유하게 식별할 수 있는 이름
 * `node.name`: 노드를 고유하게 식벽할 수 있는 이름
 * `path.data`: index 데이터를 저장할 경로(폴더) 지정
