@@ -43,7 +43,7 @@
   * 클라이언트 노드(코디네이팅 노드): node.master: false / node.data: false / node.ingest: false
 
 
-### 마스터 fault <- 질문?
+### 마스터 fault
 * 마스터로 정의된 노드들은 각각 작업이 처리될 때마다 하나씩 증가하는 cluster state version을 갖음
 * 마스터가 내려가게 되면 각 마스터 노드들은 discovery에 정의된 호스트에게 Ping Check를 시작
 * 응답이 오는 호스트 중 cluster state version이 낮은 호스트(늦게 반영되어 제일 건강한 노드)를 마스터로 선출
