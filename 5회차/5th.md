@@ -137,7 +137,7 @@
 * 쿼리 안의 구조에 따른 분류
   * `Lead query caluse` - 자체적으로 쿼리를 할 수 있는 완성된 검색 쿼리(단일 쿼리)  
     ex) match, term, range
-  * `Compound query clause` - leaf query 혹은 compound query를 혼합해주는 검색 쿼리(여러개 혼합)  
+  * `Compound query clause` - leaf query 혹은 compound query를 혼합해주는 검색 쿼리(혼합 쿼리)  
     ex) bool, boosting
 
 * Compound query clause의 쿼리 종류 - bool 쿼리를 이용하고 그 하위 서브 쿼리 조합으로 사용
@@ -146,8 +146,8 @@
   * bool + `filter` - 문서에 일치하는 항목, 스코어 0, 보통 filter context 실행(캐싱이 됨)  
   ex)`GET bank/_search {"query": { "bool": {"filter": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
   * bool + `should` - 문서에 일치하는 항목, must 나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴  
-    * A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)
-    * B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)
+  A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)
+  B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)
   ex)`GET bank/_search{"query": {"bool": { "should": [{"match": {"state": { "query": "MI","boost": 2 }} },{"term": {"gender.keyword": {"value": "M" }} }],"minimum_should_match" : 1 }} }`  
   * bool + `must_not` - 문서에 일치하지 않는 항목, 스코어 1, 보통 filter context 실행(캐싱이 됨)  
   ex)`GET bank/_search {"query": { "bool": {"must_not": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
