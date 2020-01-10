@@ -70,11 +70,11 @@
     2. 요청을 받은 샤드들은 전체 문서 내용(_source) 등의 정보를 요청 노드로 전달하고, 해당 노드는 클라이언트로 최종 결과를 리턴
     
 * 쿼리 요청 방식에 따른 분류
-  * URI 검색
+  * URI 검색  
     A. URI에 request parameter를 통해서 검색 질의  
     B. 한정된 옵션의 검색만 가능  
     ex)`GET bank/_search?from=0&size=100&q=address:Fleet&sort=age:asc`  
-  * Request Body 검색
+  * Request Body 검색  
     A. `Query DSL(Domain Spectific Language)`을 이용해 HTTP Body를 정의한 이후 query 절로 질의  
     B. 여러가지 옵션을 넣어서 질의 가능  
     ex)`GET bank/_search {"query" : { "term" : {"city.keyword": "Mulino" }}}`  
