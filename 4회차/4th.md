@@ -57,14 +57,70 @@
 
 ### ES 고급 설정 - Hot Node / Warm Node
 * 의미
-    * 최근 데이터를 더 자주 보는 경향을 이용한 매커니즘으로 최근 데이터는 고성능 HOT 노드로 오래된 데이터는 저렴한 Warm 노드로 이동
+    * 최근 데이터를 더 자주 보는 경향을 이용한 매커니즘으로 최근 데이터는 고성능 스토리지의 HOT 노드로 오래된 데이터는 저렴한 스토리지의 Warm 노드로 이동
 * 방식 - elasticsearch.yml 파일, Template, Curator를 이용하여 운영
     1. elasticsearch.yml 파일의 `node.attr.box_type`를 `hot` or `warm`으로 변경
     2. 템플릿의 `index.routing.allocation.require.box_type` 활용하여 새로 생성되는 인덱스의 샤드를 hot 쪽으로만 할당
     3. 일정 시간이 지나면 hot 노드를 warm 노드로 재할당(Curator로 자동화)
 
 
-### ES 고급 API
-* Cluster API
-* Reindex API
-* Bulk API
+### Cluster API
+* 의미
+    * 운영 중인 클러스터의 셋팅 정보 확인이나 온라인 상태로 설정을 변경할 수 있는 API로 자주 변경할 여지가 있는 사항은 Cluster API(`_cluster`)로 진행
+* Cluster API의 모드 
+    * Transient 모드: Full cluster restart시 리셋되는 설정 (memory 설정)
+    * Persistent 모드: 사용자가 변경하지 않으면 영구적으로 보존되는 설정 (disk 설정)
+        cf) Transient -> Persistent -> elasticsearch.yml 순서로 클러스터 설정의 우선순위를 가짐
+* 클러스터 세팅 확인하기
+    * GET 메소드 이용
+    ex) `GET _cluster/settings`
+* 클러스터 셋팅하기
+    * PUT 메소드 이용
+    ex) `PUT _clust/settings {"persistent" : {"설정"},"transient" : {"설정"}}`
+    * 클러스터 셋팅 고급 기술
+    1. 운영중인 특정 노드의 샤드를 제외 - 안정적인 롤링 리스타트나 unassigned 샤드가 있는 상황에서 작업 시 유용
+    ex) `PUT _cluster/settings {"transient" : {"cluster.routing.allocation.exclude._ip" : "1.1.1.1, 2.2.2.2, 3.3.3.*"}}`
+    2. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry
+    ex) `POST _cluster/reroute?retry_failed`
+    3. 샤드 할당에 실패한 이유 확인
+    ex) `POST _cluster/allocation/explain`
+    4. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기
+    ex) ` PUT _cluster/settings {"transient": { "action.destructive_requires_name": true} }`
+
+### Reindex API
+* 의미
+    * 내부 및 외부 클러스터의 인덱스를 복제할 때 이용하는데 Reindex API(`_reindex`)로 진행
+* 특징
+    * 원본 인덱스의 셋팅이나 매핑은 복제되지 않음
+* 내부 클러스터의 인덱스 재색인하기
+    * POST 메소드 이용
+    ex) `POST _reindex {"source": {"index": "twitter"}, "dest": {"index": "new_twitter" }}`
+* 외부 클러스터의 인덱스 재색인하기
+    * elasticsearl.yml 파일과 POST 메소드 이용
+    ex)
+    `reindex.remote.whitelist: "1.1.1.1:9200"` 
+    `POST _reindex {"source": { "remote": {"host": "http://1.1.1.1:9200" },"index": "twitter" },"dest": {"index": "re_twitter"} }`
+
+### Bulk API
+* 의미
+    * 인덱스 문서의 인덱싱, 삭제, 업데이트를 묶음으로 진행할 수 있는 API로 JSON 형태의 문서도 bulk로 처리할 수 있음
+* Bulk API로 묶음 요청하기
+    * POST 메소드 이용
+    ex) `POST _bulk { "index" : { "_index" : "test", "_type" : "_doc", "_id" : "1" } } { "field1" : "value1" } { "delete" : { "_index" : "test", "_type" : "_doc", "_id" : "2" } } { "create" : { "_index" : "test", "_type" : "_doc", "_id" : "3" } } { "field1" : "value3" } { "update" : {"_id" : "1", "_type" : "_doc", "_index" : "test"} } { "doc" : {"field2" : "value2"} }`
+
+### Aliases API
+* 의미
+    * 인덱스 한개 또는 여러개의 묶음에 별칭을 부여하는 API 재색인을 할 때 자주 사용함
+* 별칭 부여하기
+    * POST 메소드 이용
+    ex) `POST /_aliases { "actions": [ { "add": { "index": "test1", "alias": "alias1" } }] }`
+    ex) `POST /_aliases {"actions": [{ "add": { "indices": ["test1", "test2"], "alias":"alias2" } } ]}`
+
+### 기타 API
+* forcemerge API
+    * 백그라운드에서만 진행되던 segment 병합을 제로 병합하는 API로 인덱싱이나 검색이 없는 시간에 강제로 병합
+    * ex) `POST /_forcemerge?max_num_segments=1`
+* open/close API
+    * 인덱스의 상태를 open/close 할 수 있는 API로 close된 인덱스는 read/write 불가 및 라우팅 disable
+    * ex) `POST twitter/_close`   
+      ex)`POST twitter/_open`
