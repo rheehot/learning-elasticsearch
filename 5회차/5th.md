@@ -20,29 +20,29 @@
     ex) 공백 기준 토크나이징  
     C. Token filter: Tokenizer에 의해 결정된 Token들을 가공하는 과정  
     ex) stop word 제거(필요없는 word)  
-  * 특징
+  * 특징  
     A. 기본은 standard analyzer이고 직접 정의한 또는 외부 구성요소를 통한 사용자 정의 분석기로 변경 가능  
     B. `_analyze API`를 통해 분석되는 토큰 확인 가능(테스트용)  
     C. 인덱스의 analysis를 정의하고 해당 인덱스를 대상으로 `_analyze` API 실행 가능  
     D. 특정 text type field에 대해 분석기를 변경하려면 반드시 `_reindex` 필요  
     E. index close/open 이후 적용  
     F. 토큰 생성과 `토큰 검색 시에도` 사용  
-  * Standard Analyzer
+  * Standard Analyzer  
     A. character filter 미사용  
     B. standard tokenizer 사용  
     C. standard toekn filter, lowercase token filter, stop token filter 사용  
-  * Whitespace Analyzer
+  * Whitespace Analyzer  
     A. character filter 미사용  
     B. whitespace tokenizer 사용  
     C. token filter 미사용  
-  * Nori Analzyer
+  * Nori Analzyer  
     A. character filter 미사용  
     B. nori_tokenizer 사용  
     C. nori_part_of_speech token filter, nori_readingform token filter 사용  
     cf) nori_tokenizer는 decompound_mode 별로 복합어에 대한 다른 토큰을 가져갈 수 있는 설정 존재  
-      none: 단어를 분리하지 앟고 그대로 제공  
-      discard: 복합어는 버리고 봅합어를 나눈 토큰으로 설정  
-      mixed: 복합어와 복합어를 나눈 토큰으로 설정  
+    none: 단어를 분리하지 앟고 그대로 제공  
+    discard: 복합어는 버리고 봅합어를 나눈 토큰으로 설정  
+    mixed: 복합어와 복합어를 나눈 토큰으로 설정  
   * 분석기 정의하는 방법
     * A. 이미 정의되어 있는 ES 제공 analyzer를 그대로 사용하는 방법  
     ex)`PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer": { "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": ["uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text","analyzer": "my_analyzer"} }} }`  
