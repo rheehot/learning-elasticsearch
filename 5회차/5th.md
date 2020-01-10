@@ -74,7 +74,6 @@
     A. URI에 request parameter를 통해서 검색 질의  
     B. 한정된 옵션의 검색만 가능  
     ex)`GET bank/_search?from=0&size=100&q=address:Fleet&sort=age:asc`  
-
   * Request Body 검색
     A. `Query DSL(Domain Spectific Language)`을 이용해 HTTP Body를 정의한 이후 query 절로 질의  
     B. 여러가지 옵션을 넣어서 질의 가능  
@@ -95,7 +94,7 @@
     ex)`GET bank/_search {"_source": false,"sort": { "age": "desc" } }`  
 
 * 쿼리 요청 결과에 따른 분류
-  * Full Text Query(Query Context)
+  * Full Text Query(Query Context)  
     A. 쿼리 문을 분석하여 검색하고 유사성을 기준으로 스코어(`_score`)가 가장 높은 문서 순으로 결과를 리턴  
     B. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용  
     cf) 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 낮을수록 스코어가 높아짐  
