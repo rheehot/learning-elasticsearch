@@ -123,11 +123,11 @@
   ex)`GET bank/_search {"query": { "match": {"address": {"query": "345 Fleet", "boost": 2.0} }} }`  
   cf) boost 옵션으로 스코어의 가중치를 부여할 수 있음  
   * `match_phrase Query` - analyze된 쿼리의 토큰 중 해당 value를 순서대로 합쳐서 쿼리 구문을 만들어 검색  
-
   ex)`GET bank/_search {"query": { "match_phrase": {"address": "Fleet Walk" }} }`  
-  * `match_phrase_prefix Query` - match_phrase와 동일한 방식으로 문서 검색  
 
+  * `match_phrase_prefix Query` - match_phrase와 동일한 방식으로 문서 검색  
   ex)`GET bank/_search {"query": { "match_phrase_prefix": {"address": "425 Fleet W" }} }`
+
   * `multi_match Query` -  fields parameter에 정의된 field들에 대해서 match 쿼리 검색  
   ex)`GET multi_match_index/_search {"query": { "multi_match": {"query": "ks","fields": [ "first", "comment"] }} }`
 
@@ -135,12 +135,13 @@
   ex)`GET bank/_search {"query": { "query_string" : {"query" : "Walk Flee*","fields": [ "address", "employer"] }} }`  
 
 * Term Level Query의 쿼리 종류
-  * `term Query` - 역색인 된 토큰 중에 term이 정확히 일치하는 것만 검색
+  * `term Query` - 역색인 된 토큰 중에 term이 정확히 일치하는 것만 검색  
   ex)`GET bank/_search {"query": { "term" : {"gender.keyword": "M", "boost": 2.0 }} }`  
   cf) boost 옵션으로 스코어의 가중치를 부여할 수 있음  
 
   * `terms Query` - 여러개의 용어에 대해 검색  
   ex)`GET bank/_search {"query": { "terms" : {"gender.keyword": ["F","M"] }} }`
+  
   * `range Query` - numeric, date, geo field에 대해서만 가능  
   cf) gte(greater than || equal), gt, lte(less than || equal), lt parameter 사용  
 
