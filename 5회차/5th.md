@@ -108,9 +108,9 @@
       A. 쿼리 문을 분석하여 검색하고 유사성을 기준으로 스코어(`_score`)가 가장 높은 문서 순으로 결과를 리턴  
       B. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용  
       cf) 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 낮을수록 스코어가 높아짐  
-        1. TF(Term Frequency) : Term이 해당 Document에 등장하는 빈도
-        2. IDF(Inverse Document Frequency) : Term이 전체 Index에서 등장하는 빈도
-        3. Field Length : Term이 포함된 Field의 길이
+        1. TF(Term Frequency) : Term이 해당 Document에 등장하는 빈도  
+        2. IDF(Inverse Document Frequency) : Term이 전체 Index에서 등장하는 빈도  
+        3. Field Length : Term이 포함된 Field의 길이  
     
   * Term Level Query(Filter Context)
       A. 정확히 일치하는 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)
@@ -141,7 +141,7 @@
 
   * `terms Query` - 여러개의 용어에 대해 검색  
   ex)`GET bank/_search {"query": { "terms" : {"gender.keyword": ["F","M"] }} }`
-  
+
   * `range Query` - numeric, date, geo field에 대해서만 가능  
   cf) gte(greater than || equal), gt, lte(less than || equal), lt parameter 사용  
 
