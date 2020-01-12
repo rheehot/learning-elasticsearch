@@ -4,18 +4,18 @@
 
 ### 검색엔진으로 ES 활용하기 - 분석기와 색인
 * 색인과 역색인
-  * 색인의 필수 조건
+  * 색인의 필수 조건  
       A. 프라이머리 샤드가 할상 제일 먼저 쓰여야한다.  
       B. 프라이머리 샤드가 전부 쓰여진 이후에 리플리카 샤드로 복제를 한다.  
 
-  * 특징
+  * 특징  
       A. 색인은 특정한 데이터가 어느 위치에 있는지 미리 저장해두어 검색 시에 로찾을 수 있는 것으로 색인은 데이터의 위치를 순서대로 기억  
       B. 역색인은 데이터를 색인할 때 Term(단어) 기준으로 색인을 수행하는 것으로 인간의 사고에 가깝고 성능이 좋음  
       C. 사전 정의된 `Analyzer(분석기)`에 의해 토크나이징 된 단어를 색인함  
 
 
 * `분석기(Analyzer)`
-  * 구성요소
+  * 구성요소  
       A. Character filter: 원본 텍스트를 사전에 가공하는 과정  
       ex) html 태그 제거, 패턴 매칭 ....  
       B. Tokenizer: 어떤 방식으로 원본 Text를 토크나이징하여 Term을 만들지 결정  
@@ -46,14 +46,14 @@
       B. nori_tokenizer 사용  
       C. nori_part_of_speech token filter, nori_readingform token filter 사용  
       cf) nori_tokenizer는 decompound_mode 별로 복합어에 대한 다른 토큰을 가져갈 수 있는 설정 존재  
-      none: 단어를 분리하지 앟고 그대로 제공  
-      discard: 복합어는 버리고 봅합어를 나눈 토큰으로 설정  
-      mixed: 복합어와 복합어를 나눈 토큰으로 설정  
+        none: 단어를 분리하지 앟고 그대로 제공  
+        discard: 복합어는 버리고 봅합어를 나눈 토큰으로 설정  
+        mixed: 복합어와 복합어를 나눈 토큰으로 설정  
   
   * 분석기 정의하는 방법
     * A. 이미 정의되어 있는 ES 제공 analyzer를 그대로 사용하는 방법  
+        cf) `Analyzer` 필드를 정의하면 인데스 정의하듯이 정의해도 analyzer로 인식  
         ex)`PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer": { "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": ["uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text","analyzer": "my_analyzer"} }} }`  
-        cf) `Analyzer` 필드를 정의하면 익데스 정의하듯이 정의해도 analyzer로 인식  
 
     * B. 이미 정의되어 있는 character filter, tokenizer, token filter를 조합하여 사용하는 방식
         ex)`PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer":  "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": [ "uppercase" ]} }} },"mappings": { "properties": {a  "comment": {"type": "text", "analyzer": "my_analyzer }} }`
@@ -91,7 +91,7 @@
 
 * Request Body 검색(Query DSL)
   * JSON 기반의 ES 쿼리를 정의하는 언어
-  * Query DSL 특징
+  * Query DSL 특징  
       A. from, size parameter로 pagination 설정 가능  
       ex)`GET bank/_search {"from":0, "size": 2, "query" : {"match" : { "address": "Fleet"} }}`  
       B. `index.max_result_window` 필드로 조정 가능  
@@ -108,9 +108,9 @@
       A. 쿼리 문을 분석하여 검색하고 유사성을 기준으로 스코어(`_score`)가 가장 높은 문서 순으로 결과를 리턴  
       B. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용  
       cf) 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 낮을수록 스코어가 높아짐  
-        1. TF(Term Frequency) : Term이 해당 Document에 등장하는 빈도  
-        2. IDF(Inverse Document Frequency) : Term이 전체 Index에서 등장하는 빈도  
-        3. Field Length : Term이 포함된 Field의 길이  
+        1. `TF(Term Frequency)` : Term이 해당 Document에 등장하는 빈도  
+        2. `IDF(Inverse Document Frequency)` : Term이 전체 Index에서 등장하는 빈도  
+        3. `Field Length` : Term이 포함된 Field의 길이  
     
   * Term Level Query(Filter Context)
       A. 정확히 일치하는 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)
@@ -161,9 +161,8 @@
   * bool + `filter` - 문서에 일치하는 항목, 스코어 0, 보통 filter context 실행(캐싱이 됨)  
     ex)`GET bank/_search {"query": { "bool": {"filter": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
   * bool + `should` - 문서에 일치하는 항목, must 나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴  
-    A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)
-    B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)
+    A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)  
+    B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)  
     ex)`GET bank/_search{"query": {"bool": { "should": [{"match": {"state": { "query": "MI","boost": 2 }} },{"term": {"gender.keyword": {"value": "M" }} }],"minimum_should_match" : 1 }} }`  
-
   * bool + `must_not` - 문서에 일치하지 않는 항목, 스코어 1, 보통 filter context 실행(캐싱이 됨)  
   ex)`GET bank/_search {"query": { "bool": {"must_not": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
