@@ -18,7 +18,7 @@
         6. `nested type` mapping을 이용하여 적용하기
         7. `_all` 필드 사용의 오버헤드와 대안
 * static mapping 정의하는 방법
-    * 매핑 이름을 적지 않고 인덱스 이름에 `mapping`의 `properties` 속성에 값을 넣고 PUT
+    * 매핑 이름을 적지 않고 인덱스 이름에 `mapping`의 `properties` 속성에 값을 넣고 PUT  
     ex)`PUT text_index1 {"mappings": { "properties": {"title": { "type": "text"} }} }`
 * text field와 keyword field 선택을 통한 성능 최적화
     * text field: 전문 검색(full-text)로 색인되는 필드 타입으로 `sorting` 및 `aggregation`에 사용되지 않고 `analyzer`를 통해 생성된 토큰으로 검색 가능
@@ -101,7 +101,7 @@
         2. 원본이 별도로 있다면 색인될 때 replica를 없애면 성능 향상
 
 ### ES 검색 성능 최적화 - 기타
-* `_forcemerge API
+* `_forcemerge` API
     * segment를 강제로 병합하는 API
     * 색인이 끝난 인덱스는 하나의 segment로 merge를 추천
     * I/O 비용이 크기 때문에 샥인이나 검색이 없는 시간대에 수행
