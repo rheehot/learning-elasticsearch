@@ -36,7 +36,7 @@
     ex) `PUT object_index {"mappings": { "properties": {"region": {"type": "keyword"}, "manager": {"properties": { "age": {"type": "integer" },"name": { "properties": {"first": {"type": "keyword"}, "last": {"type": "keyword" }} }} }} }}`
 * `nested type` mapping을 이용하여 정의하기
     * nested type으로 정의한 매핑은 색인이 되는 순간 다시 dynamic mapping으로 색인되어 가변적인 길이의 데이터를 입력받을 때 유용
-    * nested type에 대한 쿼리는 nested 서브 쿼리로 검색
+    * nested type에 대한 쿼리는 nested 서브 쿼리로 검색  
     ex) ` PUT nested_index/_doc/1 {"user" : [ {"first" : "John","last" : "Smith" },{"first" : "Alice", "last" : "White"} ]}`
 
 ### ES 색인 성능 최적화 - 기타
@@ -123,6 +123,7 @@
     * 대기열 큐가 꽉차면 그 이후부터는 요청이 reject되어 `_nodes/stats`를 통해 모니터링
     * `_cat/thread_pool?v`를 통해서 thread_pool 정보만 실시간 조회 가능
     * elasticsearch.yml 파일에 `thread_pool.bulk_size`와 `thread_pool_search.queue_size`를 조절하여 파일 큐 사이즈 조절 가능
+
 * cat API
     * GET Method를 통해 클러스터, 노드, 인덱스 등의 상태를 확인해볼 수 있는 API
     * `GET _cat/nodes`: 클러스터에 속한 node들의 상태를 확인할 수 있는 명령
