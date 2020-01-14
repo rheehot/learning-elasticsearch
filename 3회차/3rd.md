@@ -10,7 +10,7 @@
   * 클러스터에 API로 호출
   * 클러스터 단위로 설정
 
-### `elasticsearch.yml` 파일 환경 설정(Static settings)
+### elasticsearch.yml 파일 환경 설정(Static settings)
 * `cluster.name`: 클러스터를 고유하게 식별할 수 있는 이름
 * `node.name`: 노드를 고유하게 식벽할 수 있는 이름
 * `path.data`: index 데이터를 저장할 경로(폴더) 지정
@@ -48,7 +48,7 @@
 * 마스터가 내려가게 되면 각 마스터 노드들은 discovery에 정의된 호스트에게 Ping Check를 시작
 * 응답이 오는 호스트 중 cluster state version이 낮은 호스트(늦게 반영되어 제일 건강한 노드)를 마스터로 선출
 
-### `jvm.options` 파일 환경 설정
+### jvm.options 파일 환경 설정
 * JVM
   * JVM은 Heap에 객체를 할당하여 사용하는 구조로 Young / Old Generation으로 Heap을 구성하여 사용
   * Young Generation은 Eden / From survivor / To survivor로 나뉨
@@ -78,7 +78,7 @@
   * `-XX:SurvivorRatio`: Survivor0 Survivor1 Eden 튜닝  
   ex) -XX:SurvivorRatio=6 -> Survivor0:Survivor1:Eden = 1:1:6 로 튜닝
 
-### `log4j2.properties` 파일 환경 설정
+### log4j2.properties 파일 환경 설정
 `${sys:es.logs.base_path}`: Log 설정 디렉토리
 `${sys:es.logs.cluster_name}`: 클러스터 이름  
 `${sys:es.logs.node_name}`: 노드 이름
