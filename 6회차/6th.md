@@ -33,17 +33,17 @@
 * `properties` 서브 필드 확장
     * `properties`는 매핑을 만들 때나 계층 구조의 데이터(object,list)를 이용할 때 모두 사용하는데 계층 구조의 데이터를 사용할 때 이용하면 효율적
     * object의 .을 이용하여 필드에 접근하여 쿼리를 요청할 수 있음   
-    ex) `PUT object_index {"mappings": { "properties": {"region": {"type": "keyword"}, "manager": {"properties": { "age": {"type": "integer" },"name": { "properties": {"first": {"type": "keyword"}, "last": {"type": "keyword" }} }} }} }}`
+    ex)`PUT object_index {"mappings": { "properties": {"region": {"type": "keyword"}, "manager": {"properties": { "age": {"type": "integer" },"name": { "properties": {"first": {"type": "keyword"}, "last": {"type": "keyword" }} }} }} }}`
 * `nested type` mapping을 이용하여 정의하기
     * nested type으로 정의한 매핑은 색인이 되는 순간 다시 dynamic mapping으로 색인되어 가변적인 길이의 데이터를 입력받을 때 유용
     * nested type에 대한 쿼리는 nested 서브 쿼리로 검색  
-    ex) ` PUT nested_index/_doc/1 {"user" : [ {"first" : "John","last" : "Smith" },{"first" : "Alice", "last" : "White"} ]}`
+    ex)`PUT nested_index/_doc/1 {"user" : [ {"first" : "John","last" : "Smith" },{"first" : "Alice", "last" : "White"} ]}`
 
 ### ES 색인 성능 최적화 - 기타
 * `_all` 필드 사용의 오버헤드와 대안
     * `_all` 필드는 문서의 검색 요청 시에 모든 필드의 값들을 합쳐 힙 영역에 올리는 필드로 전체를 검색할 때 사용하나 성능이 매우 떨어지기 때문에 사용하면 안되는 필드(7.x버전 이상에서는 제거)
     * 여러 개의 필드를 동시에 검색할 여지가 있을 때는 `copy_to` 기능을 사용  
-    ex) ` PUT copy_index {"mappings": { "properties": {"first_name": {"type": "text", "copy_to": "full_name"}, "last_name": {"type": "text","copy_to": "full_name" },"full_name": { "type": "text"} }} }`
+    ex)`PUT copy_index {"mappings": { "properties": {"first_name": {"type": "text", "copy_to": "full_name"}, "last_name": {"type": "text","copy_to": "full_name" },"full_name": { "type": "text"} }} }`
 * `refresh interval`을 설정
     * `refresh interval`는 메모리 캐시 버퍼 영역으로부터 세그먼트에 도큐먼트를 저장하는 주기
     * refresh가 되야만 검색이 가능한 상태가 되지만 검색하기 전에는 interval을 길게 가져갈 수록 I/O 빈도가 낮아져 성능이 향상
@@ -58,7 +58,7 @@
 ### ES 검색 성능 최적화 - 쿼리 튜닝
 * multi field로 검색을 해야할 때에는 가능한 적은 필드로 검색
     * `copy_to`를 이용하면 두개의 필드를 하나로 줄여 검색 가능  
-    ex) `PUT copy_index {"mappings": { "properties": {"first_name": {"type": "text", "copy_to": "full_name"}, "last_name": {"type": "text","copy_to": "full_name" },"full_name": { "type": "text"} }} }`
+    ex)`PUT copy_index {"mappings": { "properties": {"first_name": {"type": "text", "copy_to": "full_name"}, "last_name": {"type": "text","copy_to": "full_name" },"full_name": { "type": "text"} }} }`
 * numeric field 에 대해 keyword field로 색인 고려
 * keyword type에서 집ㅖ 등의 수치 계산은 안됨 
 * `wildcard`는 꼭 써야하는지 검토
@@ -105,7 +105,7 @@
     * segment를 강제로 병합하는 API
     * 색인이 끝난 인덱스는 하나의 segment로 merge를 추천
     * I/O 비용이 크기 때문에 샥인이나 검색이 없는 시간대에 수행
-    ex) `POST shakespeare/_forcemerge?max_num_segments=1`
+    ex)`POST shakespeare/_forcemerge?max_num_segments=1`
 * Routing
     * `routing key`를 통해서 특정 샤드로 색인하는 방법으로 색인 샤드 할당 알고리즘으로 할당하여 검색을 하는 것이 아닌 문서 가져오기 과정을 거치게 되어 성능이 향상
     * 특정 샤드로 색인하기 때문에 문서가 쏠릴 수 있음
