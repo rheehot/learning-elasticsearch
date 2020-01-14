@@ -37,6 +37,7 @@
 * `nested type` mapping을 이용하여 정의하기
     * nested type으로 정의한 매핑은 색인이 되는 순간 다시 dynamic mapping으로 색인되어 가변적인 길이의 데이터를 입력받을 때 유용
     * nested type에 대한 쿼리는 nested 서브 쿼리로 검색  
+    * nested type의 Parent와 Child는 같은 샤드에 배치되므로 분배 문제가 있어 스키마 설계 시 고려가 필요  
     ex)`PUT nested_index/_doc/1 {"user" : [ {"first" : "John","last" : "Smith" },{"first" : "Alice", "last" : "White"} ]}`
 
 ### ES 색인 성능 최적화 - 기타
@@ -76,10 +77,10 @@
     2. filter context에서 사용된 쿼리에 대해 버퍼 캐시에 캐싱 ?
     3. 자주 사용되는 쿼리로 서비스 전에 `filter context`를 사용해 미리 쿼리를 날려 버퍼 캐시에 캐싱
     4. 캐시 사이즈가 크다면 filter context에 와일드 카드 쿼리로 전체 데이터를 로딩     
-* 지양해야할 쿼리 구조
-    1. Parent/Child 구조로 joint job이 들어가는 구조
-    2. nested datatype field를 사용한 매핑을 사용하는 구조
-    3. ES에서 제공하는 스크립트를 사용하여 색인하고 검색하는 구조
+* 지양해야할 검색 구조
+    1. Parent/Child 구조로 joint job이 들어가는 구조 - parent와 child가 동일한 샤드에 저장되어 샤드 크기 분배 문제 발생
+    2. nested datatype field를 사용한 매핑을 사용하는 구조 - nested가 동일한 샤드에 저장되어 샤드 크기 분배 문제 발생
+    3. ES에서 제공하는 `script` 속성을 사용하여 색인하고 검색하는 구조 - 스크립트는 업데이트 방식이 아니라 스크립트 수행 후 reindex 방식이므로 오버헤드가 큼
 
 ### ES 검색 성능 최적화 - 샤드배치 결정하기
 * 샤드 개수를 결정할 때 고려해야할 점
@@ -110,9 +111,9 @@
     * `routing key`를 통해서 특정 샤드로 색인하는 방법으로 색인 샤드 할당 알고리즘으로 할당하여 검색을 하는 것이 아닌 문서 가져오기 과정을 거치게 되어 성능이 향상
     * 특정 샤드로 색인하기 때문에 문서가 쏠릴 수 있음
 * Rollover API
-    * 라우팅으로 커진 샤드를 케어하는 방법으로 특정 조건이 맞으면 새로운 인덱스를 생성하고 alias를 옮겨주는 기능
-    * 샤드에 배치된 문서 자체는 옮겨지지 않아서 사전 문서에 대해서는 read alias를 2개에 걸쳐 확장해야함
-    * ?dry_run을 실행하면 모의 실행 가능
+    * 라우팅으로 커진 샤드를 케어하는 방법으로 특정 조건이 맞으면 `새로운 인덱스를 생성하고 alias`를 옮겨주는 기능
+    * 이미 샤드에 배치된 문서 자체는 옮겨지지 않아서 사전 문서에 대해서는 read alias를 2개에 걸쳐 확장해야함
+    * `dry_run`을 실행하면 모의 실행 가능
 * Thread Pool Size
     * 헤비한 색인과 검색을 같이 해야하는 경우 샥인에 Thread Pool이 과하게 할당되어 검색 성능이 떨어지므로 Bulk job에 할당되는 thread pool size를 조절하여 성능 보장
     * elasticsearch.yml 파일에 `thread.bulk_size` 값을 변경하여 설정 가능
