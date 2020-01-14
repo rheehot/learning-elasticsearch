@@ -16,13 +16,13 @@
 
 * `분석기(Analyzer)`
   * 구성요소  
-      A. Character filter: 원본 텍스트를 사전에 가공하는 과정  
+      A. Character filter: 원본 텍스트를 사전에 `가공`하는 과정  
       ex) html 태그 제거, 패턴 매칭 ....  
-      B. Tokenizer: 어떤 방식으로 원본 Text를 토크나이징하여 Term을 만들지 결정  
+      B. Tokenizer: 어떤 방식으로 원본 Text를 토크나이징하여 `Term`을 만들지 결정하는 과정  
       ex) 공백 기준 토크나이징  
-      C. Token filter: Tokenizer에 의해 결정된 Token들을 가공하는 과정  
+      C. Token filter: Tokenizer에 의해 결정된 Token들을 `필터링`하는 과정  
       ex) stop word 제거(필요없는 word)  
-
+      
   * 특징  
       A. 기본은 standard analyzer이고 직접 정의한 또는 외부 구성요소를 통한 사용자 정의 분석기로 변경 가능  
       B. `_analyze API`를 통해 분석되는 토큰 확인 가능(테스트용)  
@@ -30,6 +30,7 @@
       D. 특정 text type field에 대해 분석기를 변경하려면 반드시 `_reindex` 필요  
       E. index close/open 이후 적용  
       F. 토큰 생성과 `토큰 검색 시에도` 사용  
+      G. 분석기를 구성할 때 Tokenizer는 단일 적용이지만 나머지는 복수 적용할 수 있음 
   
   * Standard Analyzer  
       A. character filter 미사용  
@@ -52,15 +53,24 @@
   
   * 분석기 정의하는 방법
     * A. 이미 정의되어 있는 ES 제공 analyzer를 그대로 사용하는 방법  
-        cf) `Analyzer` 필드를 정의하면 인데스 정의하듯이 정의해도 analyzer로 인식  
-        ex)`PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer": { "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": ["uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text","analyzer": "my_analyzer"} }} }`  
+        cf) `analyzer` 필드를 정의하면 인덱스 정의하듯이 입력해도 analyzer로 인식  
+        ex)  
+        ```json
+        PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer": { "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": ["uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text","analyzer": "my_analyzer"} }} }
+        ```  
 
     * B. 이미 정의되어 있는 character filter, tokenizer, token filter를 조합하여 사용하는 방식
-        ex)`PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer":  "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": [ "uppercase" ]} }} },"mappings": { "properties": {a  "comment": {"type": "text", "analyzer": "my_analyzer }} }`
+        ex)  
+        ```json
+        PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer":  "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": [ "uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text", "analyzer": "my_analyzer }} }
+        ```
 
     * C. 플러그인 형태로 제공되는 외부 analyer를 사용하는 방식  
         cf) 분석기에 의한 Token이나 frequency를 확인하고 싶을 때는 `terms vector` 이용  
-        ex)`POST /bank/account/25/_termvectors {"fields": ["address"], "offsets" : true, "payloads" : true, "positions" : true, "term_statistics" : true, "field_statistics" : true}`
+        ex)  
+        ```json
+        POST /bank/account/25/_termvectors {"fields": ["address"], "offsets" : true, "payloads" : true, "positions" : true, "term_statistics" : true, "field_statistics" : true}
+        ```
 
 ### 검색엔진으로 ES 활용하기 - 검색
 * 검색
@@ -159,11 +169,11 @@
 * Compound query clause의 쿼리 종류 - bool 쿼리를 이용하고 그 하위 서브 쿼리 조합으로 사용
   * bool + `must` - 문서에 일치하는 항목, 스코어 계산  
     ex)`GET bank/_search {"query": { "bool": {"must": [ {"match": { "address": {"query": "Fleet" }} }] }} }`  
-  * bool + `filter` - 문서에 일치하는 항목, 스코어 0, 보통 filter context 실행(캐싱이 됨)  
+  * bool + `filter` - 문서에 일치하는 항목, 캐싱, 스코어 셋팅이 0이므로 보통 filter context(term 쿼리) 실행
     ex)`GET bank/_search {"query": { "bool": {"filter": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
   * bool + `should` - 문서에 일치하는 항목, must 나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴  
     A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)  
     B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)  
     ex)`GET bank/_search{"query": {"bool": { "should": [{"match": {"state": { "query": "MI","boost": 2 }} },{"term": {"gender.keyword": {"value": "M" }} }],"minimum_should_match" : 1 }} }`  
-  * bool + `must_not` - 문서에 일치하지 않는 항목, 스코어 1, 보통 filter context 실행(캐싱이 됨)  
+  * bool + `must_not` - 문서에 일치하지 않는 항목, 캐싱, 스코어 셋팅이 1이므로 보통 filter context 실행(term 쿼리)
   ex)`GET bank/_search {"query": { "bool": {"must_not": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
