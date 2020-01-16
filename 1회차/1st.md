@@ -76,11 +76,48 @@
 | Query DSL | SQL |
 
 ### ES 설치하기
-* YUM을 통해 설치
-* RPM을 다운로드하여 설치
+* Java 설치 - ES는 Java 기반의 검색 라이브러리인 루씬을 이용한 엔진
+```bash 
+yum install -y java-1.8.0-openjdk-devel.x86_64
+```
+
+* YUM을 통해 ES 설치
+    * repo 등록
+    ```bash
+    $ vi /etc/yum.repos.d/elasticsearch.repo
+    ```
+    ```yml
+    [elasticsearch-6.x]
+    name=Elasticsearch repository for 6.x packages
+    baseurl=https://artifacts.elastic.co/packages/6.x/yum
+    gpgcheck=1
+    gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    enabled=1
+    autorefresh=1
+    type=rpm-md
+    ```
+    * ES 설치(6.7버전으로 설치함)
+    ```bash
+    $ yum install -y elasticsearch-6.7.0
+    ```
+
+* RPM을 다운로드하여 ES 설치
+    * wget 설치
+    ```bash
+    $ sudo yum -y install wget
+    ```
+    * rpm 다운로드(7.3버전으로 설치함)
+    ```bash
+    $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.3.0-x86_64.rpm
+    ```
+    * ES 설치(7.3버전으로 설치함)
+    ```bash
+    sudo rpm -ivh elasticsearch-7.3.0-x86_64.rpm
+    ```
+* 설정 파일
     * `/etc/sysconfig/`에 ES 환경변수 파일 존재 - `elasticsearch`
-    * `/etc/elasticsearch`에 ES 환경변수 파일 존재 - `elasticsearch.yml` / `jvm.options` / `log4j2.properties` ...
-* zip or tar를 다운로드하여 설치
+    * `/etc/elasticsearch`에 ES 환경변수 파일들이 존재 - `elasticsearch.yml` / `jvm.options` / `log4j2.properties` ...
+    * `/var/log/elasticsearch/`에 로그 파일들이 존재 - `elasticsearch.log` / {클러스터이름.log} ...
 
 ### ES 실행하기 및 실행 확인하기
 * 실행
@@ -125,16 +162,113 @@
     ```bash
     $ curl localhost:9200
     ```
+### ES 클러스터링
+* `/etc/elasticsearch/elasticsearch.yml`에 ES 노드 별로 클러스터링 환경 설정이 가능
+    * 마스터 노드
+    ```yml
+    # Cluster
+    cluster.name: alan-cluster
+
+    # Node
+    node.name: alan-es-master-1
+
+    # Paths
+    path.data: /var/lib/elasticsearch
+    path.logs: /var/log/elasticsearch
+
+    # Network - bind_host는 해당 노드가 받아들일 인터페이스 / publish_host는 본인 IP
+    network.bind_host: 0.0.0.0
+    network.publish_host: 10.202.19.29
+
+    # Set a custom port for HTTP 
+    http.port: 9200
+
+    # Discovery - Dicovery를 위한 마스터 노드의 IP와 최소 필수 마스터 노드의 개수
+    discovery.zen.ping.unicast.hosts: ["10.202.19.29","10.202.19.12","10.202.19.24"]
+    discovery.zen.minimum_master_nodes: 2
+
+    # Node - 노드 역할 설정
+    node.master: true
+    node.data: false
+    node.ingest: false
+
+    # For Head - Head 플러그인을 위한 설정
+    http.cors.enabled: true
+    http.cors.allow-origin: "*"
+
+    # For TCP among nodes - 노드들 간의 TCP 연결을 위한 포트
+    transport.tcp.port: 9300
+    ```
+
+    * 데이터 노드
+    ```yml
+    # Cluster
+    cluster.name: alan-cluster
+
+    # Node
+    node.name: alan-es-master-1
+
+    # Paths
+    path.data: /var/lib/elasticsearch
+    path.logs: /var/log/elasticsearch
+
+    # Network
+    network.bind_host: 0.0.0.0
+    network.publish_host: 10.202.19.29
+
+    # Set a custom port for HTTP
+    http.port: 9200
+
+    # Discovery
+    discovery.zen.ping.unicast.hosts: ["10.202.19.29","10.202.19.12","10.202.19.24"]
+    discovery.zen.minimum_master_nodes: 2
+
+    # Node
+    node.master: true
+    node.data: false
+    node.ingest: false
+
+    # For Head
+    http.cors.enabled: true
+    http.cors.allow-origin: "*"
+
+    # For TCP among nodes
+    transport.tcp.port: 9300
+    ```
 
 ### Kibana 설치 및 Dev Tools 활용하기
 * YUM을 통해 설치하기
+    * repo 등록
+    ```bash
+    $ vi /etc/yum.repos.d/kibana.repo
+    ```
+    ```yml
+    [kibana-7.x]
+    name=Kibana repository for 7.x packages 
+    baseurl=https://artifacts.elastic.co/packages/7.x/yum 
+    gpgcheck=1 
+    gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch 
+    enabled=1
+    autorefresh=1
+    type=rpm-md
+    ```
+    * Kibana 설치
+    ```bash
+    $ sudo yum install kibana
+    ```
+* 설정 파일
     * `/etc/kibana/`에 Kibana 환경변수 파일 존재 - `kibana.yml`
+    ```yml
+    server.host: "0.0.0.0"
+    elasticsearch.hosts: "http://{ES_URL}:9200" 
+    kibana.index: ".kibana"
+    ```
 * Kibana 실행하기
     * systemd
     ```bash
     $ sudo systemctl start kibana
     ```
-* Kibana 웹을 통해서 쿼리를 날릴 수 있는 Dev Tools가 존재
+* Kibana 웹을 통해서 ES에 쿼리를 날릴 수 있는 Dev Tools가 존재
 
 ### 개념 보충
 * 페이지 캐시: 디스크 접근을 최소화 하여 파일 I/O성능을 향상시키기 위해 사용되는 메모리 영역으로 한 번 읽은 파일의 내용을 이 페이지 캐시 영역에 저장하고 같은 파일의 접근이 일어나면 디스크에서 읽어오는 것이 아니라 페이지 캐시에서 읽음
