@@ -105,7 +105,7 @@
 * `_forcemerge` API
     * segment를 강제로 병합하는 API
     * 색인이 끝난 인덱스는 하나의 segment로 merge를 추천
-    * I/O 비용이 크기 때문에 샥인이나 검색이 없는 시간대에 수행
+    * I/O 비용이 크기 때문에 샥인이나 검색이 없는 시간대에 수행  
     ex)`POST shakespeare/_forcemerge?max_num_segments=1`
 * Routing
     * `routing key`를 통해서 특정 샤드로 색인하는 방법으로 색인 샤드 할당 알고리즘으로 할당하여 검색을 하는 것이 아닌 문서 가져오기 과정을 거치게 되어 성능이 향상
