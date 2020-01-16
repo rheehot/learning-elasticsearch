@@ -73,8 +73,8 @@
     * 쿼리의 순서는 크게 상관 없음
 * 서비스 전 쿼리 캐시 `warmup`
     * 처음 로딩되는 데이터가 Heap에 올라와 있지 않다면 버퍼 캐시에 데이터가 있는지 확인하고 버퍼캐시에도 없다면 디스크에 저장된 segment를 찾아서 메모리에 warmup이 필요
-    1. query context에서 사용되었다면 Heap에 데이터를 올리고 리턴 ?
-    2. filter context에서 사용된 쿼리에 대해 버퍼 캐시에 캐싱 ?
+    1. query context에서 사용되었다면 Heap에 데이터를 올리고 리턴
+    2. filter context에서 사용된 쿼리에 대해 버퍼 캐시에 캐싱
     3. 자주 사용되는 쿼리로 서비스 전에 `filter context`를 사용해 미리 쿼리를 날려 버퍼 캐시에 캐싱
     4. 캐시 사이즈가 크다면 filter context에 와일드 카드 쿼리로 전체 데이터를 로딩     
 * 지양해야할 검색 구조
@@ -141,8 +141,8 @@
     * GET Method를 통해 전체 클러스터 인덱스 별 프라이머리 샤드와 전체 샤드의 각종 지표를 확인하는 API로 클러스터 모니터링 지표로 활용
     * `search.(query/fetch)_total` - search 에서 (query/fetch) 를 요청한 횟수 (query/fetch)
     * `_time_in_millis` - (query/fetch) 에 소요된 milliseconds
-    * A = 1초 전 search.query_total - 현재 search.query_total = 1초 간 search query total 건수-> 초당 search query 의 rate ?
-    * B = 1초 전 search.query_time_in_millis - 현재 search.query_time_in_millis = 1초 간 query time_in_millis-> 초당 search query 의 latency ?
+    * A = 1초 전 search.query_total - 현재 search.query_total = 1초 간 search query total 건수-> 초당 search query 의 rate
+    * B = 1초 전 search.query_time_in_millis - 현재 search.query_time_in_millis = 1초 간 query time_in_millis-> 초당 search query 의 latency
 
 * Nodes API
     * 각 노드의 uuid를 key로 하여 `elasticsearch.yml`, `jvm.options`, `plugin` 정보 등을 제공
