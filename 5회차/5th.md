@@ -59,7 +59,7 @@
         PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer": { "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": ["uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text","analyzer": "my_analyzer"} }} }
         ```  
 
-    * B. 이미 정의되어 있는 character filter, tokenizer, token filter를 조합하여 사용하는 방식
+    * B. 이미 정의되어 있는 character filter, tokenizer, token filter를 조합하여 사용하는 방식  
         ex)  
         ```json
         PUT index_analyzer_settings2 {"settings": { "analysis": {"analyzer":  "my_analyzer" : {"type": "custom", "char_filter": [ "html_strip" ], "tokenizer": "standard", "filter": [ "uppercase" ]} }} },"mappings": { "properties": {"comment": {"type": "text", "analyzer": "my_analyzer }} }
@@ -173,7 +173,7 @@
     ex)`GET bank/_search {"query": { "bool": {"filter": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
   * bool + `should` - 문서에 일치하는 항목, must 나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴  
     1. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)
-    1. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)
+    1. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)  
     ex)`GET bank/_search{"query": {"bool": { "should": [{"match": {"state": { "query": "MI","boost": 2 }} },{"term": {"gender.keyword": {"value": "M" }} }],"minimum_should_match" : 1 }} }`  
   * bool + `must_not` - 문서에 일치하지 않는 항목, 캐싱, 스코어 셋팅이 1이므로 보통 filter context 실행(term 쿼리)  
   ex)`GET bank/_search {"query": { "bool": {"must_not": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
