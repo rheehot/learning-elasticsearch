@@ -123,10 +123,10 @@
         2. `IDF(Inverse Document Frequency)` : Term이 전체 Index에서 등장하는 빈도  
         3. `Field Length` : Term이 포함된 Field의 길이  
     
-  * Term Level Query(Filter Context)
-      A. 정확히 일치하는 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)
-      B. 정확히 일치하는 문서만 검색되기 때문에 _score 무의미(계산은 됨)
-      C. keyword field 기반으로만 검색 ({field}.keyword로 쿼리를 정의하든 mapping 시 keyword 로 미리 설정해야함)
+  * Term Level Query(Filter Context)  
+      A. 정확히 일치하는 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)  
+      B. 정확히 일치하는 문서만 검색되기 때문에 _score 무의미(계산은 됨)  
+      C. keyword field 기반으로만 검색 ({field}.keyword로 쿼리를 정의하든 mapping 시 keyword 로 미리 설정해야함)  
       D. term, terms, range의 쿼리를 이용
 
 * Full Text Query의 쿼리 종류
@@ -169,11 +169,11 @@
 * Compound query clause의 쿼리 종류 - bool 쿼리를 이용하고 그 하위 서브 쿼리 조합으로 사용
   * bool + `must` - 문서에 일치하는 항목, 스코어 계산  
     ex)`GET bank/_search {"query": { "bool": {"must": [ {"match": { "address": {"query": "Fleet" }} }] }} }`  
-  * bool + `filter` - 문서에 일치하는 항목, 캐싱, 스코어 셋팅이 0이므로 보통 filter context(term 쿼리) 실행
+  * bool + `filter` - 문서에 일치하는 항목, 캐싱, 스코어 셋팅이 0이므로 보통 filter context(term 쿼리) 실행  
     ex)`GET bank/_search {"query": { "bool": {"filter": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
   * bool + `should` - 문서에 일치하는 항목, must 나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴  
     A. must나 filter 항목이 없으면 적어도 하나의 쿼리절과 일치되는 결과 리턴(minimum_should_match가 default로 1)  
     B. must, filter 항목이 있으면 모두 리턴(minimum_should_match가 default로 0)  
     ex)`GET bank/_search{"query": {"bool": { "should": [{"match": {"state": { "query": "MI","boost": 2 }} },{"term": {"gender.keyword": {"value": "M" }} }],"minimum_should_match" : 1 }} }`  
-  * bool + `must_not` - 문서에 일치하지 않는 항목, 캐싱, 스코어 셋팅이 1이므로 보통 filter context 실행(term 쿼리)
+  * bool + `must_not` - 문서에 일치하지 않는 항목, 캐싱, 스코어 셋팅이 1이므로 보통 filter context 실행(term 쿼리)  
   ex)`GET bank/_search {"query": { "bool": {"must_not": [ {"match": { "address": {"query": "Fleet" }} }] }} }`
