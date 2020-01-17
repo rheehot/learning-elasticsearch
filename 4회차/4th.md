@@ -155,9 +155,9 @@
 
 ### 기타 API
 * forcemerge API
-    * 백그라운드에서만 진행되던 segment 병합을 제로 병합하는 API로 인덱싱이나 검색이 없는 시간에 강제로 병합
+    * 백그라운드에서만 진행되던 segment 병합을 제로 병합하는 API로 인덱싱이나 검색이 없는 시간에 강제로 병합  
     ex) `POST /_forcemerge?max_num_segments=1`
 * open/close API
-    * 인덱스의 상태를 open/close 할 수 있는 API로 close된 인덱스는 read/write 불가 및 라우팅 disable
+    * 인덱스의 상태를 open/close 할 수 있는 API로 close된 인덱스는 read/write 불가 및 라우팅 disable  
     ex) `POST twitter/_close`   
     ex)`POST twitter/_open`
