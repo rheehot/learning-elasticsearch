@@ -16,12 +16,12 @@
 * 의미
     * 생성되는 인덱스의 샤드가 노드의 수와 동일하면 큰 문제가 되지 않으나 노드 증설으로 인해 노드 간의 용량 이격이 벌어져 샤드 할당
 * 방식
-    * A. `_cluster API`로 reroute를 이용하여 샤드를 강제 분배
-    * B. `_cluster API`의 settings의 `disk threshold`와 `watermark` 설정을 이용 (low < high < flood_stage)
+    * `_cluster API`로 reroute를 이용하여 샤드를 강제 분배
+    * `_cluster API`의 settings의 `disk threshold`와 `watermark` 설정을 이용 (low < high < flood_stage)
         1. watermark.low: 더이상 커지지 않게할 디스크 볼륨 내 임계치(신규 생성 인덱스를 제외)
         2. watermark.high: 더이상 커지지 않게할 디스크 볼륨 내 임계치(모든 인덱스)
         3. watermark.flood_stage: 초과 즉시 모든 인덱스의 write 작업을 막는고 read-only로 사용되는 임계치
-    * C. 데이터 노드를 그룹으로 샤드 할당
+    * 데이터 노드를 그룹으로 샤드 할당
         1. 데이터 노드의 `node.attr.rack.id`를 통해 region 셋팅
         2. `cluster.routing.allocation.awareness.attributes`를 마스터 노드에 셋팅하는 순간부터 시작
 
@@ -29,15 +29,15 @@
 * 의미
     * static 설정과는 달리 운영 중에 인덱스의 `_settings`을 변경하는 방식으로 REST API로 변경 상태를 설정
 * 방식 
-    * A. `index.number_of_replicas` - 운영 중에 리플리카 샤드 개수를 변경
-    * B. `index.refresh_interval` - 메모리 버퍼캐시로 쓰인 이후 검색이 되도록 디스크로 쓰이는 시간 간격(모든 인덱스에 적용도 가능)
-    * C. `Routing Allocation` - `index.routing.allocation.enable`을 이용하여 `새롭게 할당된 데이터 노드`에 대해 샤드를 재할당하는 방식 결정
+    * `index.number_of_replicas` - 운영 중에 리플리카 샤드 개수를 변경
+    * `index.refresh_interval` - 메모리 버퍼캐시로 쓰인 이후 검색이 되도록 디스크로 쓰이는 시간 간격(모든 인덱스에 적용도 가능)
+    * `Routing Allocation` - `index.routing.allocation.enable`을 이용하여 `새롭게 할당된 데이터 노드`에 대해 샤드를 재할당하는 방식 결정
         1. all (default) - 모든 샤드들에게 할당을 허용
         2. none - 샤드가 할당되지 않도록 설정
         3. primaries - 프라이머리 샤드만 할당되도록 설정 
         4. new_primaries - 새롭게 생성되는 인덱스의 프라이머리 샤드만 할당되도록 설정
         5. null - default
-    * D. `Routing Rebalance` - `index.routing.rebalance.enable`을 이용하여 `데이터 노드`에 샤드를 어떤 방식으로 재배치할지를 결정
+    * `Routing Rebalance` - `index.routing.rebalance.enable`을 이용하여 `데이터 노드`에 샤드를 어떤 방식으로 재배치할지를 결정
         1. all (default) - 모든 샤드들에게 재배치 허용 
         2. none - 샤드가 재배치되지 않도록 설정
         3. primaries - 프라이머리 샤드만 재배치되도록 설정 
