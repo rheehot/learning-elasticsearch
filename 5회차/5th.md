@@ -118,7 +118,7 @@
       A. 쿼리 문을 분석하여 검색하고 유사성을 기준으로 스코어(`_score`)가 가장 높은 문서 순으로 결과를 리턴  
       B. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용  
       cf) 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 낮을수록 스코어가 높아짐  
-      C. analyze해서 검색
+      C. analyze해서 검색  
         1. `TF(Term Frequency)` : Term이 해당 Document에 등장하는 빈도  
         2. `IDF(Inverse Document Frequency)` : Term이 전체 Index에서 등장하는 빈도  
         3. `Field Length` : Term이 포함된 Field의 길이  
