@@ -82,7 +82,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 ```
 
 * YUM을 통해 ES 설치
-    * repo 등록
+    * repo 등록(6.x버전으로 설치)
     ```bash
     $ vi /etc/yum.repos.d/elasticsearch.repo
     ```
@@ -96,7 +96,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     autorefresh=1
     type=rpm-md
     ```
-    * ES 설치(6.7버전으로 설치함)
+    * ES 설치(6.7버전으로 설치)
     ```bash
     $ yum install -y elasticsearch-6.7.0
     ```
@@ -106,11 +106,11 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     ```bash
     $ sudo yum -y install wget
     ```
-    * rpm 다운로드(7.3버전으로 설치함)
+    * rpm 다운로드(7.3버전으로 설치)
     ```bash
     $ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.3.0-x86_64.rpm
     ```
-    * ES 설치(7.3버전으로 설치함)
+    * ES 설치(7.3버전으로 설치)
     ```bash
     sudo rpm -ivh elasticsearch-7.3.0-x86_64.rpm
     ```
@@ -238,13 +238,13 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 
 ### Kibana 설치 및 Dev Tools 활용하기
 * YUM을 통해 설치하기
-    * repo 등록
+    * repo 등록(6.x 버전으로)
     ```bash
     $ vi /etc/yum.repos.d/kibana.repo
     ```
     ```yml
-    [kibana-7.x]
-    name=Kibana repository for 7.x packages 
+    [kibana-6.x]
+    name=Kibana repository for 6.x packages 
     baseurl=https://artifacts.elastic.co/packages/7.x/yum 
     gpgcheck=1 
     gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch 
