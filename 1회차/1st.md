@@ -260,7 +260,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     * `/etc/kibana/`에 Kibana 환경변수 파일 존재 - `kibana.yml`
     ```yml
     server.host: "0.0.0.0"
-    elasticsearch.hosts: "http://localhost:9200:9200" 
+    elasticsearch.hosts: "http://localhost:9200" 
     kibana.index: ".kibana"
     ```
 * Kibana 실행하기
