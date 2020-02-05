@@ -245,7 +245,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     ```yml
     [kibana-6.x]
     name=Kibana repository for 6.x packages 
-    baseurl=https://artifacts.elastic.co/packages/7.x/yum 
+    baseurl=https://artifacts.elastic.co/packages/6.x/yum 
     gpgcheck=1 
     gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch 
     enabled=1
