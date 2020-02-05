@@ -270,7 +270,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     ```
     * systemd
     ```bash
-    $ sudo systemctl start kibana
+    $ sudo systemctl start kibana.service
     ```
 * Kibana 웹을 통해서 ES에 쿼리를 날릴 수 있는 Dev Tools가 존재
 
