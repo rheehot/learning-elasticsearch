@@ -77,6 +77,52 @@
 * HEAD 플러그인 - 한눈에 클러스터를 보기 위한 도구로 접속 포트 9100번 사용
 * HQ 플러그인 - 한눈에 클러스터의 사용률을 보기 위한 도구로 접속 포트 5000번 사용
 
+## head 플러그인 설치 
+* ElasticSearch 클러스터의 노드, 인덱스, 샤드 등을 한 눈에 볼 수 있는 플러그인
+* 2.x 버전까지는 내부 빌트인 플러그인 형태로 존재했으니 5.x 버전부터 standalone 형태로 변경됨
+* 9100 포트로 실행됨
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install git
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install bzip2 epel-release
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install npm
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd /usr/local/
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo git clone https://github.com/mobz/elasticsearch-head.git
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd elasticsearch-head/
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo npm install
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ nohup npm run start &
+```
+
+### HQ Plugin 설치 
+* 클러스터의 노드나 상세 상태정보 값을 모니터링 할 수 있는 플러그인
+* Head Plugin 과 마찬가지로 2.x 버전까지는 내부 빌트인 플러그인 형태로 존재했으니 5.x 버전부터 standalone 형태로 변경됨
+* 5000 포트로 실행됨
+
+```bash
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install git
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install bzip2 epel-release
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd /usr/local/
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo git clone https://github.com/ElasticHQ/elasticsearch-HQ.git
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ cd elasticsearch-HQ/
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo yum -y install python34 python34-pip
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo pip3 install -r requirements.txt
+
+[ec2-user@ip-xxx-xxx-xxx-xxx ~]$ sudo nohup python3 application.py &
+```
+
 ### 보충
 * ES 7.x 이상부터는 일부 명령어에서 type(_doc)을 생략하는 것이 디폴트로 되어 있음  
 ex) `GET twitter/_doc/1/_source` -> `GET twitter/_source/1`
