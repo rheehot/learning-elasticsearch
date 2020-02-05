@@ -123,7 +123,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 실행
     * init 
     ```bash
-    sudo -i service elasticsearch start
+    sudo service elasticsearch start
     ```
 
     * systemd
@@ -134,7 +134,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 재시작
     * init 
     ```bash
-    sudo -i service elasticsearch restart
+    sudo service elasticsearch restart
     ```
 
     * systemd
@@ -145,7 +145,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 종료
     * init 
     ```bash
-    sudo -i service elasticsearch stop
+    sudo service elasticsearch stop
     ```
 
     * systemd
@@ -264,6 +264,10 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     kibana.index: ".kibana"
     ```
 * Kibana 실행하기
+    * init 
+    ```bash
+    sudo service kibana start
+    ```
     * systemd
     ```bash
     $ sudo systemctl start kibana
