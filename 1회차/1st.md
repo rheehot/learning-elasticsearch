@@ -82,7 +82,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 ```
 
 * YUM을 통해 ES 설치
-    * repo 등록(6.x버전으로 설치)
+    * repo 등록(6.x버전으로)
     ```bash
     $ vi /etc/yum.repos.d/elasticsearch.repo
     ```
