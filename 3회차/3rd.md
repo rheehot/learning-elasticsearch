@@ -10,6 +10,16 @@
   * 클러스터에 API로 호출
   * 클러스터 단위로 설정
 
+### Index settings에 대한 필수 설정 요소
+* Static index settings
+  - number_of_shards
+* Dynamic index settings
+  - number_of_replicas 
+  - refresh_interval 
+  - index.routing.allocation.enable
+* other settings..
+  - Analysis, Mapping, Slowlog..
+
 ### elasticsearch.yml 파일 환경 설정(Static settings)
 * `cluster.name`: 클러스터를 고유하게 식별할 수 있는 이름
 * `node.name`: 노드를 고유하게 식벽할 수 있는 이름
