@@ -38,11 +38,14 @@
     ```json
     POST _cluster/reroute 
     {
-    "commands" : [ { "move" : {
-    "index" : "{인덱스 이름}", "shard" : 0,
-    "from_node" : "{노드 이름}", "to_node" : "{노드 이름}"
-       } 
-     }]
+        "commands" : [{ 
+            "move" : {
+                "index" : "{인덱스 이름}",
+                "shard" : 0,
+                "from_node" : "{노드 이름}", 
+                "to_node" : "{노드 이름}"
+            } 
+        }]
     }
     ```
     * `_cluster API`의 settings의 `disk threshold`와 `watermark` 설정을 이용하는 방식
@@ -60,33 +63,82 @@
                 } 
         }
         ```
-    * 데이터 노드를 그룹으로 샤드 할당
-        1. 데이터 노드의 `node.attr.rack.id`를 통해 region 셋팅
+        cf) 디스크 용량이 더 이상 차오르지 못하도록 할 임계치가 필요한데, 임계치를 넘으면 인덱스를 삭제 가능한 `read_only_allow_delete` 모드로 변경하고 데이터 정리 이후 모드 해제
+        ```json
+        PUT {인덱스 이름}/_settings 
+        {
+            "index.blocks.read_only_allow_delete": null 
+        }
+        ``` 
+    * 데이터 노드를 그룹으로 샤드 할당하는 방법
+        1. 데이터 노드의 `node.attr.rack.id`를 통해 region 군을 셋팅
         2. `cluster.routing.allocation.awareness.attributes`를 마스터 노드에 셋팅하는 순간부터 시작
+        3. 마스터 노드가 인지하는 순간부터 샤드를 데이터 노드에 셋팅된 rack_id를 기준으로 리벨런싱이 시작
 
 ### ES 환경 설정(Dynamic settings)
 * 의미
-    * static 설정과는 달리 운영 중에 인덱스의 `_settings`을 변경하는 방식으로 REST API로 변경 상태를 설정
+    * static 설정과는 달리 운영 중에 인덱스의 `_settings`을 변경하는 방식으로 REST API로 변경 설정
 * 방식 
     * `index.number_of_replicas` - 운영 중에 리플리카 샤드 개수를 변경
-    * `index.refresh_interval` - 메모리 버퍼캐시로 쓰인 이후 검색이 되도록 디스크로 쓰이는 시간 간격(모든 인덱스에 적용도 가능)
+    ```json
+    PUT {인덱스 이름}/_settings 
+    {
+        "index.number_of_replicas" : 2 
+    }
+    ```
+    * `index.refresh_interval` - 메모리 버퍼 캐시로 쓰인 이후 검색이 되도록 디스크로 쓰이는 시간 간격 변경
+    ```json
+    PUT {인덱스 이름}/_settings 
+    {
+        "index.refresh_interval" : "2s" 
+    }
+    ```
+    cf) 인덱스 이름 대신 _all을 삽입하면 클러스터 내의 모든 인덱스에 대해서 적용 가능
     * `Routing Allocation` - `index.routing.allocation.enable`을 이용하여 `새롭게 할당된 데이터 노드`에 대해 샤드를 재할당하는 방식 결정
         1. all (default) - 모든 샤드들에게 할당을 허용
         2. none - 샤드가 할당되지 않도록 설정
         3. primaries - 프라이머리 샤드만 할당되도록 설정 
         4. new_primaries - 새롭게 생성되는 인덱스의 프라이머리 샤드만 할당되도록 설정
         5. null - default
+        ```json
+        PUT {인덱스 이름}/_settings 
+        {
+            "index.routing.allocation.enable" : null 
+        }
+        ```
     * `Routing Rebalance` - `index.routing.rebalance.enable`을 이용하여 `데이터 노드`에 샤드를 어떤 방식으로 재배치할지를 결정
         1. all (default) - 모든 샤드들에게 재배치 허용 
         2. none - 샤드가 재배치되지 않도록 설정
         3. primaries - 프라이머리 샤드만 재배치되도록 설정 
         4. replicas - 리플리카 샤드만 재배치되도록 설정 
         5. null - default로 설정
+        ```json
+        PUT {인덱스 이름}/_settings 
+        {
+            "index.routing.rebalance.enable" : null 
+        }
+        ```
 
 ### ES Mapping
 * 의미
     * ES의 문서 스키마(6.x부터 1 index - single mapping만 가능)
         1. Dynamic Mapping - 스키마가 없을 때 인입되는 문서를 보고 자동으로 매핑을 만듦
+        ```json
+        PUT intdata/_doc/1 
+        { 
+            "count": 5 
+        }
+        ```
+        | Value Type | Mapping Field / Description in Dynamic mapping |
+        |:-----------|:-----------------------------------------------|
+        |null|No field is added|
+        |true of false|boolean field|
+        |floating point number|float field
+        |integer|long field|
+        |object|object field|
+        |array|string or object field|
+        |date string|double or long field|
+        |text string|text field with a keyword sub-field|
         2. Static Mapping - 사용자가 정의한 스키마를 기준으로 매핑
 * 특징
     * `mappings` 필드를 정의하면 인덱스 정의하듯이 입력해도 매핑으로 인식
@@ -96,6 +148,18 @@
         1. 인덱스 패턴, 인덱스 세팅, 인덱스 매핑 관련 사항 정의
         2. 인덱스가 생성될 때 패턴이 매칭되는 인덱스는 해당 정의
         3. order가 높은 번호가 낮은 번호를 override하여 merging
+        ```json
+        PUT _template/{템플릿 이름}
+        {
+            "index_patterns": ["{인덱스 이름 패턴}", "{인덱스 이름 패턴}"], "order" : 0,
+            "settings": 
+            {
+                "index.number_of_shards": {샤드 개수}
+            }
+        }
+        ```
+        4. 템플릿 삭제는 DELETE 메소드 이용
+        `DELETE _template/{템플릿 이름}`
 
 
 ### 매핑과 필드
@@ -133,11 +197,26 @@
 
 ### ES 고급 설정 - Hot Node / Warm Node
 * 의미
-    * 최근 데이터를 더 자주 보는 경향을 이용한 매커니즘으로 최근 데이터는 고성능 스토리지의 HOT 노드로 오래된 데이터는 저렴한 스토리지의 Warm 노드로 이동
+    * 최근 데이터를 더 자주 보는 경향을 이용한 매커니즘으로 최근 데이터는 고성능 스토리지(SSD)의 HOT 노드로 오래된 데이터는 저렴한 스토리지(SATA)의 Warm 노드로 이동
 * 방식 - elasticsearch.yml 파일, Template, Curator를 이용하여 운영
     1. elasticsearch.yml 파일의 `node.attr.box_type`를 `hot` or `warm`으로 변경
-    2. 템플릿의 `index.routing.allocation.require.box_type` 활용하여 새로 생성되는 인덱스의 샤드를 hot 쪽으로만 할당
-    3. 일정 시간이 지나면 hot 노드를 warm 노드로 재할당(Curator로 자동화)
+    2. 템플릿을 통해 패턴을 적용하고 패턴에 일치되는 새로 생성된 인덱스는 `index.routing.allocation.require.box_type` 활용하여 새로 생성되는 인덱스의 샤드를 hot 쪽으로만 할당
+    ```json    
+    PUT _template/{템플릿 이름} {
+        "index_patterns": ["{인덱스 이름 패턴}", "{인덱스 이름 패턴}"], 
+        "order" : 0,
+        "settings": {
+        "index.number_of_shards": 1 }
+    }
+    ```
+    3. 일정 시간이 지나면 hot 노드를 warm 노드로 재할당
+    ```json     
+    PUT {인덱스 이름}/_settings 
+    {
+        "index.routing.allocation.require.box_type" : "warm" 
+    }
+    ```
+    4. 위 방식을 Curator를 사용하여 자동화하여 운영
 
 
 ### Cluster API
