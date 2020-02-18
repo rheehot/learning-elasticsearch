@@ -1,26 +1,65 @@
-# ES 온보딩 교육 4회차 & ES 튜토리얼 3-2
+# ES 온보딩 교육 4회차 & 강의 교안 3~4
 
 <hr>
 
 ### Rolling Restart
 * 의미
-    * 시스템 작업이나 ES의 버전 업그레이드를 해야하는 경우가 있을 때 노드들을 내리게 되면 주인을 잃은 샤드들이 기본 라우팅 설정에 의해 균등을 위해 자동으로 프라이머리 샤드와 레플리카 샤드가 다른 노드에 복구 되는데 이때 발생하는 다시 샤드를 재배치하고 리벨런싱하는 오버헤드를 줄이기 위한 작업
+    * 시스템 작업이나 ES의 버전 업그레이드를 해야하는 경우가 있을 때 노드들을 내리게 되면 주인을 잃은 샤드들이 기본 라우팅 설정에 의해 자동으로 리플리카 샤드가 다른 노드에 복구 되는데 자동 복구되면 작업 이후 다시 재할당을 해야하는 오버헤드 존재하므로 재할당에 쓰이는 `네트워크 및 디스크 오버헤드가 일어나지 않게 하는 작업`
 * 과정
-    1. `_cluster API`로 라우팅 할당(`cluster.routing.allocation.enable`)을 `new_primaires`로 변경하여 Primary와 Replica 샤드 간 데이터 동기화
-    2. 작업 하고자 하는 노드 중지 -> 제외된 노드 내 샤드들이 `unassignned` 상태가 됨(클러스터 상태 Yellow)
-    3. 작업 실행(ES 버전 업 or 시스템 작업)
-    4. 해당 노드의 ES 재시작
-    5. _cluster API로 라우팅 할당을 `null`로 변경하여 라우팅 할당을 가능하게 변경
+    1. `_cluster API`로 라우팅 할당 방식을 `new_primaires`로 변경하여 새로운 프라미어리 샤드만 할당될 수 있게 변경
+    ```json
+    PUT _cluster/settings 
+    {
+        "transient" : {
+            "cluster.routing.allocation.enable" : “new_primaries”
+            } 
+    }
+    ```
+    2. Primary와 Replica 샤드 간 데이터 동기화
+    `POST _flush/synced`
+    3. 작업 하고자 하는 노드 중지 -> 클러스터에서 제외된 노드 내 샤드들이 `unassignned` 상태가 됨(클러스터 상태 Yellow)
+    4. 작업 실행(ES 버전 업 or 시스템 작업 등등...)
+    5. 해당 노드의 ES 재시작
+    6. _cluster API로 라우팅 할당을 `null`로 변경하여 라우팅 할당을 가능하게 변경하여 복구
+    ```json
+    PUT _cluster/settings 
+    {
+        "transient" : {
+            "cluster.routing.allocation.enable" : null
+            } 
+    }
+    ```
 
 ### Shard Allocation
 * 의미
-    * 생성되는 인덱스의 샤드가 노드의 수와 동일하면 큰 문제가 되지 않으나 노드 증설으로 인해 노드 간의 용량 이격이 벌어져 샤드 할당
+    * 생성되는 인덱스의 샤드 개수가 노드의 수와 동일하면 큰 문제가 되지 않으나 `인덱스의 샤드 개수와 노드의 수가 다를 경우` 노드 간의 샤드 용량 이격이 벌어져 샤드 할당을 제어해줘야함 
 * 방식
-    * `_cluster API`로 reroute를 이용하여 샤드를 강제 분배
-    * `_cluster API`의 settings의 `disk threshold`와 `watermark` 설정을 이용 (low < high < flood_stage)
+    * `_cluster API`로 reroute를 이용하여 샤드를 강제 분배하는 방식
+    ```json
+    POST _cluster/reroute 
+    {
+    "commands" : [ { "move" : {
+    "index" : "{인덱스 이름}", "shard" : 0,
+    "from_node" : "{노드 이름}", "to_node" : "{노드 이름}"
+       } 
+     }]
+    }
+    ```
+    * `_cluster API`의 settings의 `disk threshold`와 `watermark` 설정을 이용하는 방식
         1. watermark.low: 더이상 커지지 않게할 디스크 볼륨 내 임계치(신규 생성 인덱스를 제외)
         2. watermark.high: 더이상 커지지 않게할 디스크 볼륨 내 임계치(모든 인덱스)
         3. watermark.flood_stage: 초과 즉시 모든 인덱스의 write 작업을 막는고 read-only로 사용되는 임계치
+        ```json
+        PUT _cluster/settings 
+        {
+            "transient": {
+                "cluster.routing.allocation.disk.threshold_enabled": "true", 
+                "cluster.routing.allocation.disk.watermark.low": "85%", 
+                "cluster.routing.allocation.disk.watermark.high": "90%", 
+                "cluster.routing.allocation.disk.watermark.flood_stage": "95%"
+                } 
+        }
+        ```
     * 데이터 노드를 그룹으로 샤드 할당
         1. 데이터 노드의 `node.attr.rack.id`를 통해 region 셋팅
         2. `cluster.routing.allocation.awareness.attributes`를 마스터 노드에 셋팅하는 순간부터 시작
