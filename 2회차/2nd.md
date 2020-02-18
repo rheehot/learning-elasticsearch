@@ -53,11 +53,11 @@ cf) HEAD 메소드는 자주 사용하지 않고 PUT 메소드는 업데이트 �
     ```json
     PUT {인덱스 이름}/_doc/1 {"user" : "kimchy","post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}
     ```  
-    ID가 없을 때만 인덱싱  
+    ID가 없을 때만 문서 1번으로 인덱싱  
     ```json 
     PUT {인덱스 이름}/_doc/1/_create {"user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}
     ```  
-    ID가 없을 때만 인덱싱  
+    ID가 없을 때만 문서 1번으로 인덱싱  
     ```json
     PUT {인덱스 이름}/_doc/?op_type=create {"user" : "kimchy", "post_date" : "2009-11-15T14:12:12", "message" : "trying out Elasticsearch"}
     ```  
