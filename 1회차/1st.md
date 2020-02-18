@@ -277,9 +277,9 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     $ sudo systemctl start kibana.service
     ```
 * Kibana 웹을 통해서 ES에 쿼리를 날릴 수 있는 Dev Tools가 존재
-* Elastic Stack(ElasticSearch, Logstash, Kibana)은 하나의 패키지로 버전을 같게 설치하는 것이 좋음
+* Elastic Stack(ElasticSearch, Logstash, Kibana)은 하나의 패키지로 버전을 같게 설치해야함
 
-### 개념 보충
+### 보충
 * 페이지 캐시: 디스크 접근을 최소화 하여 파일 I/O성능을 향상시키기 위해 사용되는 메모리 영역으로 한 번 읽은 파일의 내용을 이 페이지 캐시 영역에 저장하고 같은 파일의 접근이 일어나면 디스크에서 읽어오는 것이 아니라 페이지 캐시에서 읽음
 * 버퍼 캐시: 디스크의 블록 단위로 데이터를 전송하는 블록 디바이스가 가지고 있는 블록 자체에 대한 캐시로 커널이 특정 블록에 접근하면 블록의 내용을 버퍼 캐시 영역에 저장하고 동일한 블록에 접근할 시에 버퍼 캐시에서 읽음(현재는 페이지 캐시가 버퍼 캐시 내에 포함되어 있음)
 * init와 systemd 차이: RHEL7/CentOS7로 올라오면서 전체 시스템 초기화 및 관리 프로세스를 init 프로세스에서 systemd로 바꾸었음
