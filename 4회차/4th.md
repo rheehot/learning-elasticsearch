@@ -124,7 +124,7 @@
     * ES의 문서 스키마(6.x부터 1 index - single mapping만 가능)
         1. Dynamic Mapping - 스키마가 없을 때 인입되는 문서를 보고 자동으로 매핑을 만듦
         ```json
-        PUT intdata/_doc/1 
+        PUT {인덱스 이름}/_doc/{인덱스 ID 번호} 
         { 
             "count": 5 
         }
@@ -221,61 +221,150 @@
 
 ### Cluster API
 * 의미
-    * 운영 중인 클러스터의 셋팅 정보 확인이나 온라인 상태로 설정을 변경할 수 있는 API로 자주 변경할 여지가 있는 사항은 Cluster API(`_cluster`)로 진행
+    * 운영 중인 클러스터의 셋팅 정보 확인이나 온라인으로 클러스터 설정을 변경할 수 있는 API로 자주 변경할 여지가 있는 사항은 Cluster API(`_cluster`)로 진행
 * Cluster API의 모드 
-    * `Transient` 모드: Full cluster `restart시` 리셋되는 설정 (memory 설정)
+    * `Transient` 모드: Full cluster `restart` 시 리셋되는 설정 (memory 설정)
     * `Persistent` 모드: 사용자가 변경하지 않으면 영구적으로 보존되는 설정 (disk 설정)
-        cf) Transient -> Persistent -> elasticsearch.yml 순서로 클러스터 설정의 우선순위를 가짐
+        cf) elasticsearch.yml -> Persistent -> Transient 순서로 클러스터 설정의 높은 우선순위를 가짐
 * 클러스터 세팅 확인하기
     * GET 메소드 이용  
-    ex) `GET _cluster/settings`
+    `GET _cluster/settings`
 * 클러스터 셋팅하기
     * PUT 메소드 이용  
-    ex) `PUT _cluster/settings {"persistent" : {"설정"},"transient" : {"설정"}}`
-    * 클러스터 셋팅 고급 기술
-    1. 운영중인 특정 노드의 샤드를 제외 - 안정적인 롤링 리스타트나 unassigned 샤드가 있는 상황에서 작업 시 유용  
-    ex) `PUT _cluster/settings {"transient" : {"cluster.routing.allocation.exclude._ip" : "1.1.1.1, 2.2.2.2, 3.3.3.*"}}`
-    2. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry  
-    ex) `POST _cluster/reroute?retry_failed`
-    3. 샤드 할당에 실패한 이유 확인  
-    ex) `POST _cluster/allocation/explain`
-    4. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기  
-    ex) ` PUT _cluster/settings {"transient": { "action.destructive_requires_name": true} }`
+    ```json
+    PUT _cluster/settings 
+    {
+        "persistent" : "{설정}",
+        "transient" : "{설정}"
+    }
+    ```
+* 클러스터 셋팅 고급 기술
+    1. 클러스터 셋팅 초기화
+    ```json
+    PUT _cluster/settings 
+    {
+        "persistent" : { "cluster.routing.allocation.disk.threshold_enabled": null},
+        "transient" : {"cluster.routing.allocation.enable" : null }
+    }
+    ```
+    2. 운영중인 특정 노드의 샤드를 제외 - 안정적인 롤링 리스타트나 unassigned 샤드가 있는 상황에서 작업 시 유용  
+    ```json
+    PUT _cluster/settings 
+    {
+        "transient" : {"cluster.routing.allocation.exclude._ip" : "1.1.1.1, 2.2.2.2, 3.3.3.*"}
+    }
+    ```
+    cf) IP는 class 별로도 셋팅이 가능하고 node name이나 host name 기준으로도 제외가 가능
+    3. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry(시도 횟수 제한 존재)  
+    `POST _cluster/reroute?retry_failed`
+    4. 샤드 할당에 실패한 이유 확인  
+    `POST _cluster/allocation/explain`
+    5. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기 - 인덱스가 선언되는 위치에 `_all`이나 *를 넣으면 전체 인덱스에 대해 작업 가능
+    ```json
+    PUT _cluster/settings 
+    {
+        "transient": { "action.destructive_requires_name": true} 
+    }
+    ```
 
 ### Reindex API
 * 의미
-    * 내부 및 외부 클러스터의 인덱스를 복제할 때 이용하는데 Reindex API(`_reindex`)로 진행
+    * 내부 및 외부 클러스터의 `인덱스를 복제`할 때 이용하는데 Reindex API(`_reindex`)로 진행
 * 특징
-    * 원본 인덱스의 셋팅이나 매핑은 복제되지 않음
+    * 원본 인덱스의 셋팅이나 매핑은 복제되지 않고 순수한 데이터만 복사
 * 내부 클러스터의 인덱스 재색인하기
     * POST 메소드 이용  
-    ex) `POST _reindex {"source": {"index": "twitter"}, "dest": {"index": "new_twitter" }}`
+    ```json
+    POST _reindex 
+    {
+        "source": {"index": "{인덱스 이름}"}, 
+        "dest": {"index": "{인덱스 이름}"}
+    }
+    ```
 * 외부 클러스터의 인덱스 재색인하기
-    * elasticsearl.yml 파일과 POST 메소드 이용  
-    ex)
-    `reindex.remote.whitelist: "1.1.1.1:9200"` 
-    `POST _reindex {"source": { "remote": {"host": "http://1.1.1.1:9200" },"index": "twitter" },"dest": {"index": "re_twitter"} }`
+    * elasticsearch.yml 파일과 POST 메소드 이용  
+    인덱스를 복제 받을 클러스터의 elasticsearch.yml에 원본 인덱스 클러스터를 whitelist로 등록
+    ```yml
+    reindex.remote.whitelist: "{원본 인덱스 클러스터의 IP}:9200"
+    ```
+    * 재색인하기
+    ```sh
+    $ curl -XPOST -H 'Content-Type: application/json' http://{my_cluster_url}/_reindex 
+    {
+        "source": { 
+            "remote": {
+                "host": "http://{원본 인덱스 클러스터의 IP}:9200" 
+                },
+            "index": "{원본 인덱스 이름}" 
+            },
+        "dest": {
+            "index": "{옮길 인덱스 이름}"
+        } 
+    }
+    ```
 
 ### Bulk API
 * 의미
     * 인덱스 문서의 인덱싱, 삭제, 업데이트를 묶음으로 진행할 수 있는 API로 JSON 형태의 문서도 bulk로 처리할 수 있음
 * Bulk API로 묶음 요청하기
     * POST 메소드 이용  
-    ex) `POST _bulk { "index" : { "_index" : "test", "_type" : "_doc", "_id" : "1" } } { "field1" : "value1" } { "delete" : { "_index" : "test", "_type" : "_doc", "_id" : "2" } } { "create" : { "_index" : "test", "_type" : "_doc", "_id" : "3" } } { "field1" : "value3" } { "update" : {"_id" : "1", "_type" : "_doc", "_index" : "test"} } { "doc" : {"field2" : "value2"} }`
+    ```json
+    POST _bulk 
+    {"index" : { "_index" : "test", "_type" : "_doc", "_id" : "1" }} 
+    { "field1" : "value1" } 
+    { "delete" : { "_index" : "test", "_type" : "_doc", "_id" : "2" }} 
+    { "create" : { "_index" : "test", "_type" : "_doc", "_id" : "3" }} 
+    { "field1" : "value3" } 
+    { "update" : {"_id" : "1", "_type" : "_doc", "_index" : "test"}} 
+    { "doc" : {"field2" : "value2"}}
+    ```
+    ```sh
+     $ curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty' --data- binary {문서 이름}.json
+    ```
 
 ### Aliases API
 * 의미
-    * 인덱스 한개 또는 여러개의 묶음에 별칭을 부여하는 API 재색인을 할 때 자주 사용함
+    * 인덱스 한개 또는 여러 개의 인덱스 묶음에 별칭을 부여하는 API `재색인을 할 때 자주 사용함`
 * 별칭 부여하기
     * POST 메소드 이용    
-    ex) `POST /_aliases { "actions": [ { "add": { "index": "test1", "alias": "alias1" } }] }`  
-    ex) `POST /_aliases {"actions": [{ "add": { "indices": ["test1", "test2"], "alias":"alias2" } } ]}`
+    별칭 부여하기
+    ```json
+    POST /_aliases 
+    { 
+        "actions": [ { "add": { "index": "{인덱스 이름}", "alias": "{별칭 이름}" } }] 
+    }
+    ```
+    별칭 삭제하기
+    ```json  
+    POST /_aliases 
+    {
+        "actions": [{ "remove": { "index": "{인덱스 이름}", "alias": "{별칭 이름}" } }] 
+    }
+    ```
+    여러 개의 인덱스에 별칭 부여하기
+    ```json
+    POST /_aliases 
+    {
+        "actions": [{ "add": { "indices": ["{인덱스 이름}", "{인덱스 이름}"], "alias":"{별칭 이름}" } } ]
+    }
+    ```
+    와일드 카드를 이용하여 여러 개의 인덱스에 별칭 부여하기
+    ```json
+    POST /_aliases 
+    {
+        "actions": [{ "add": { "index": "test*", "alias": "{별칭 이름}" } }] 
+    }
+    ```
 
 ### 기타 API
 * forcemerge API
-    * 백그라운드에서만 진행되던 segment 병합을 제로 병합하는 API로 인덱싱이나 검색이 없는 시간에 강제로 병합  
-    ex) `POST /_forcemerge?max_num_segments=1`
+    * 백그라운드에서만 진행되던 segment 병합을 강제로 병합하는 API로 인덱싱이나 검색이 없는 시간에 강제로 병합  
+    `POST /_forcemerge?max_num_segments=1`
 * open/close API
     * 인덱스의 상태를 open/close 할 수 있는 API로 close된 인덱스는 read/write 불가 및 라우팅 disable  
-    ex) `POST twitter/_close`   
-    ex)`POST twitter/_open`
+    `POST twitter/_close`   
+    `POST twitter/_open`
+
+
+### 개념 보충
+* 라우팅(routing) – 문서를 인덱스에 저장할 때 인덱스의 어느 primary shard에 저장할지 결정하는 것
