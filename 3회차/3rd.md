@@ -109,15 +109,13 @@
 
 ### ES와 파일 관련 메모리 설정
 * ES는 인덱스를 파일시스템에 쓸 때 mmap을 사용하는데 ES가 열 수 있는 File Descriptor가 부족하면 데이터 손실이 날 수 있어 스왑 메모리를 활용하여 많은 파일 디스크립터가 수용될 수 있도록 설정
-* `/etc/security/limits.conf`의 vm.max_map_count 수정
-* `$ sudo sysctl -p`을 통해 파일에서 읽고 커널 매개변수 값 변경
-* `$ sudo swapoff -a`: 스왑 메모리 비활성화
-* `/etc/sysctl.conf`의 vm.swappiness 수정
-  * vm.swappiness = 0	스왑 사용안함
-  * vm.swappiness = 1	스왑 사용 최소화
-  * vm.swappiness = 60	기본값
-  * vm.swappiness = 100	적극적으로 스왑 사용
-* `$ sudo sysctl -p`: 커널 설정 파일에서 데이터를 읽고 커널 매개변수 값 변경
+* 설정 과정
+  * `/etc/security/limits.conf`의 vm.max_map_count 수정
+  * `$ sudo sysctl -p`을 통해 파일에서 읽고 커널 매개변수 값 변경
+  * `$ sudo swapoff -a`: 스왑 메모리 비활성화
+  * `/etc/sysctl.conf`의 vm.swappiness 수정
+    cf) vm.swappiness = 0	스왑 사용안함, vm.swappiness = 1	스왑 사용 최소화, vm.swappiness = 60	기본값, vm.swappiness = 100	적극적으로 스왑 사용
+  * `$ sudo sysctl -p`: 커널 설정 파일에서 데이터를 읽고 커널 매개변수 값 변경
 
 
 ### 개념 보충
