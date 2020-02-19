@@ -310,7 +310,7 @@
     * POST 메소드 이용  
     ```json
     POST _bulk 
-    {"index" : { "_index" : "test", "_type" : "_doc", "_id" : "1" }} 
+    { "index" : { "_index" : "test", "_type" : "_doc", "_id" : "1" }} 
     { "field1" : "value1" } 
     { "delete" : { "_index" : "test", "_type" : "_doc", "_id" : "2" }} 
     { "create" : { "_index" : "test", "_type" : "_doc", "_id" : "3" }} 
