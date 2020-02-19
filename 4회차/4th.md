@@ -202,7 +202,8 @@
     1. elasticsearch.yml 파일의 `node.attr.box_type`를 `hot` or `warm`으로 변경
     2. 템플릿을 통해 패턴을 적용하고 패턴에 일치되는 새로 생성된 인덱스는 `index.routing.allocation.require.box_type` 활용하여 새로 생성되는 인덱스의 샤드를 hot 쪽으로만 할당
     ```json    
-    PUT _template/{템플릿 이름} {
+    PUT _template/{템플릿 이름} 
+    {
         "index_patterns": ["{인덱스 이름 패턴}", "{인덱스 이름 패턴}"], 
         "order" : 0,
         "settings": {
