@@ -12,11 +12,11 @@
 
 ### Index settings에 대한 필수 설정 요소
 * Static index settings
-  - number_of_shards
+  - number_of_shards(Primary 샤드의 개수)
 * Dynamic index settings
-  - number_of_replicas 
-  - refresh_interval 
-  - index.routing.allocation.enable
+  - number_of_replicas(Replica 샤드의 개수)
+  - refresh_interval(refresh 주기)
+  - index.routing.allocation.enable (인덱스에 대한 샤드 할당 제어)
 * other settings..
   - Analysis, Mapping, Slowlog..
 
@@ -124,3 +124,4 @@
 * 0.0.0.0: 로컬 시스템의 모든 IP 주소
 * ACL: Access Control List의 약자로, 다른 호스트들이 네트워크에 접근 여부를 허용할지 말지를 결정하는 리스트
 * 스왑 영역: 리눅스에서 물리적 메모리(RAM)의 용량이 가득 차게될 경우 사용되는 디스크 상의 여유 공간을 말합니다. 즉, 시스템이 처리하고 있는 데이터를 저장할 RAM이 충분하지 않을 때 스왑 공간
+* index.routing.allocation.enable은 인덱스에 샤드를 할당하는 제어할 수 있게 하는 옵션으로 `all(기본값)`-모든 샤드에 샤드 할당을 허용, `primaries`-원본 샤드에 대해서만 샤드 할당을 허용, `new_primaries`-새로 작성된 기본 샤드에 대해서만 샤드 할당을 허용, `none`-샤드 할당이 허용하지 않음
