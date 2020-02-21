@@ -356,7 +356,6 @@
 
 * nodes API
     * 각 노드의 uuid를 key로 하여 `elasticsearch.yml`, `jvm.options`, `plugin` 정보 등을 제공
-    `GET _nodes`
     * 노드 이름, IP 정보, ES 버전, 노드 역할 정보 조회 가능
     * elasticserach.yml에 셋팅된 정보 외 추가정보
     * jvm.options에 셋팅된 정보
