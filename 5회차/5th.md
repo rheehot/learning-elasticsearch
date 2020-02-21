@@ -241,17 +241,19 @@
 * 쿼리 `요청 결과`에 따른 분류
   * Full Text Query(Query Context)
     1. 쿼리 문을 `분석`하여 검색하고 유사성을 기준으로 스코어(`_score`)가 가장 높은 문서 순으로 결과를 리턴
-    2. text field 기반으로 검색
-    3. 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 작을수록 스코어가 높아짐
+    2. 쿼리 절이 “쿼리가 문서와 일치 하는가?”라는 질문에 답
+    3. text field 기반으로 검색
+    4. 스코어링 요소 - TF 가 높을수록, IDF 가 낮을수록, Field Length 가 작을수록 스코어가 높아짐
         1. `TF(Term Frequency)`: Term이 해당 Document에 등장하는 빈도  
         2. `IDF(Inverse Document Frequency)`: Term이 전체 Index에서 등장하는 빈도  
         3. `Field Length`: Term이 포함된 Field의 길이  
     4. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용
   * Term Level Query(Filter Context)  
     1. `정확히 일치하는` 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)
-    2. `정확히 일치하는` 문서만 검색되기 때문에 _score 무의미(계산은 됨)
-    3. keyword field 기반으로만 검색 ({field}.keyword로 쿼리를 정의하든 mapping 시 keyword 로 미리 설정해야함)
-    4. term, terms, range의 쿼리를 이용
+    2. 쿼리 절이 “쿼리가 문서와 일치하는가?”라는 질문에 답
+    3. `정확히 일치하는` 문서만 검색되기 때문에 _score 무의미(계산은 됨)
+    4. keyword field 기반으로만 검색 ({field}.keyword로 쿼리를 정의하든 mapping 시 keyword 로 미리 설정해야함)
+    5. term, terms, range의 쿼리를 이용
 
 * Full Text Query의 쿼리 종류
   * `match Query` - 쿼리문의 analyze된 토큰으로 key:value 방식으로 유사한 문서 검색  
@@ -414,7 +416,7 @@
       }
     }
     ```  
-  * bool + `filter` - 문서에 일치하는 항목, 캐싱, 스코어 셋팅이 0이므로 보통 filter context로 실행  
+  * bool + `filter` - 문서에 일치하는 항목을 걸러냄, 캐싱, 스코어 셋팅이 0이므로 보통 filter context로 실행  
     ```json
     GET bank/_search
     {
