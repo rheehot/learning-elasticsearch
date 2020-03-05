@@ -3,7 +3,7 @@
 
 ##### ElasticSearch version: 6.7.0이지만 7.x의 내용도 일부 수록되어 있습니다.
 
-# Table of Contents
+### Table of Contents
 * [1회차](./1회차/1st.md)
 * [2회차](./2회차/2nd.md)
 * [3회차](./3회차/3rd.md)
