@@ -1,7 +1,7 @@
 # ElasticSearch 정리 자료
 엘라스틱서치의 튜토리얼 및 강의 자료 와 엘라스틱서치 실무 가이드(권택환 외 5인)를 정리하여 만들었습니다.  
 
-##### ElasticSearch version: 6.7.0이지만 7.x의 내용도 일부 수록되어 있습니다.
+##### ElasticSearch version: 6.7.0(7.x의 내용도 일부 수록)
 
 ### Table of Contents
 * [1회차](./1회차/1st.md)
