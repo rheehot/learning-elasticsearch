@@ -115,7 +115,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     ```
     * ES 설치(7.3버전으로 설치)
     ```bash
-    sudo rpm -ivh elasticsearch-7.3.0-x86_64.rpm
+    $ sudo rpm -ivh elasticsearch-7.3.0-x86_64.rpm
     ```
 
 * 설정 파일
@@ -127,7 +127,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 실행
     * init 
     ```bash
-    sudo service elasticsearch start
+    $ sudo service elasticsearch start
     ```
 
     * systemd
@@ -138,7 +138,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 재시작
     * init 
     ```bash
-    sudo service elasticsearch restart
+    $ sudo service elasticsearch restart
     ```
 
     * systemd
@@ -149,7 +149,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * 종료
     * init 
     ```bash
-    sudo service elasticsearch stop
+    $ sudo service elasticsearch stop
     ```
 
     * systemd
@@ -270,7 +270,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
 * Kibana 실행하기
     * init 
     ```bash
-    sudo service kibana start
+    $ sudo service kibana start
     ```
     * systemd
     ```bash
