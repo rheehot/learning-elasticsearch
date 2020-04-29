@@ -3,6 +3,8 @@
 
 ##### ElasticSearch version: 6.7.0(7.x의 내용도 일부 수록)
 
+##### ElasticSearch Cluster Infomation: Master Node: 3, Hot Node: 3, Warm Node: 3
+
 ### Table of Contents
 * [1회차](./1회차/1st.md)
 * [2회차](./2회차/2nd.md)
