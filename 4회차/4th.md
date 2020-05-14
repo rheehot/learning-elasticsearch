@@ -240,7 +240,7 @@
     }
     ```
 * 클러스터 셋팅 고급 기술
-    1. 클러스터 셋팅 초기화
+    a. 클러스터 셋팅 초기화
     ```json
     PUT _cluster/settings 
     {
@@ -248,7 +248,7 @@
         "transient" : {"cluster.routing.allocation.enable" : null }
     }
     ```
-    2. 운영중인 특정 노드의 샤드를 제외 - 안정적인 롤링 리스타트나 unassigned 샤드가 있는 상황에서 작업 시 유용  
+    b. 운영중인 특정 노드의 샤드를 제외 - 안정적인 롤링 리스타트나 unassigned 샤드가 있는 상황에서 작업 시 유용  
     ```json
     PUT _cluster/settings 
     {
@@ -256,11 +256,11 @@
     }
     ```
     cf) IP는 class 별로도 셋팅이 가능하고 node name이나 host name 기준으로도 제외가 가능  
-    3. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry(시도 횟수 제한 존재)  
+    c. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry(시도 횟수 제한 존재)  
     `POST _cluster/reroute?retry_failed`  
-    4. 샤드 할당에 실패한 이유 확인  
+    d. 샤드 할당에 실패한 이유 확인  
     `POST _cluster/allocation/explain`  
-    5. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기 - 인덱스가 선언되는 위치에 `_all`이나 *를 넣으면 전체 인덱스에 대해 작업 가능
+    e. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기 - 인덱스가 선언되는 위치에 `_all`이나 *를 넣으면 전체 인덱스에 대해 작업 가능
     ```json
     PUT _cluster/settings 
     {
