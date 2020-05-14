@@ -39,7 +39,7 @@
   * Standard Analyzer  
     1. character filter 미사용  
     1. standard tokenizer 사용  
-    1. standard toekn filter, lowercase token filter, stop token filter 사용  
+    1. standard token filter, lowercase token filter, stop token filter 사용  
   
   * Whitespace Analyzer  
     1. character filter 미사용  
@@ -247,7 +247,7 @@
         1. `TF(Term Frequency)`: Term이 해당 Document에 등장하는 빈도  
         2. `IDF(Inverse Document Frequency)`: Term이 전체 Index에서 등장하는 빈도  
         3. `Field Length`: Term이 포함된 Field의 길이  
-    4. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용
+    5. match, match_phrase, match_phrase_prefix, query_string의 쿼리를 이용
   * Term Level Query(Filter Context)  
     1. `정확히 일치하는` 용어만 검색하고 analyze되지 않은 결과만 리턴(NoSQL을 쓰는 듯한 느낌)
     2. 쿼리 절이 “쿼리가 문서와 일치하는가?”라는 질문에 답
