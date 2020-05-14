@@ -255,7 +255,7 @@
         "transient" : {"cluster.routing.allocation.exclude._ip" : "1.1.1.1, 2.2.2.2, 3.3.3.*"}
     }
     ```
-    cf) IP는 class 별로도 셋팅이 가능하고 node name이나 host name 기준으로도 제외가 가능
+    cf) IP는 class 별로도 셋팅이 가능하고 node name이나 host name 기준으로도 제외가 가능  
     3. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry(시도 횟수 제한 존재)  
     `POST _cluster/reroute?retry_failed`
     4. 샤드 할당에 실패한 이유 확인  
