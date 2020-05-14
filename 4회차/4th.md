@@ -257,9 +257,9 @@
     ```
     cf) IP는 class 별로도 셋팅이 가능하고 node name이나 host name 기준으로도 제외가 가능  
     3. 샤드 할당에 실패한 샤드를 강제 분배 - 샤드에 할당되지 못하면 디스크 볼륨을 정리하고 retry(시도 횟수 제한 존재)  
-    `POST _cluster/reroute?retry_failed`
+    `POST _cluster/reroute?retry_failed`  
     4. 샤드 할당에 실패한 이유 확인  
-    `POST _cluster/allocation/explain`
+    `POST _cluster/allocation/explain`  
     5. 모든 인덱스에 대해 _all 이나 wildcard를 대상으로 삭제 작업 방지하기 - 인덱스가 선언되는 위치에 `_all`이나 *를 넣으면 전체 인덱스에 대해 작업 가능
     ```json
     PUT _cluster/settings 
