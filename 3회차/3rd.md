@@ -58,7 +58,7 @@
 * Ping 기반으로 동작
 
 ### Split Brain
-* 클러스터 구성에서 네트워크 단절로 인해 예비 마스터 노드를 마스터 노드로 승격하게 되는데 이때 클러스터가 복구 되어도 여러 개의 노드가 서로 마스터로 인식되는 증상
+* 클러스터 구성에서 네트워크 단절로 인해 예비 마스터 노드를 마스터 노드로 승격하게 되는데 이때 클러스터가 복구 되어도 여러 개의 노드가 서로 마스터로 인식되는 증상
 * 최소 필수 마스터의 개수를 홀수 개로 두어 과반을 넘지 못할 경우 클러스터를 중지 시켜 Split Brain을 방지
 * 4대의 마스터 노드가 존재하는 경우 최소 마스터의 개수(4/2+1=`3`) -> 2대가 내려가는 순간 클러스터 중지
 
@@ -81,7 +81,7 @@
   * `-Xmx{바이트 단위 사이즈}g`: 최대 힙 사이즈 크기 설정
 * jvm.options를 통한 기타 설정
   * `XX:+UseConcMarkSweepGC`: 기본으로 CMS GC를 사용
-  * `-XX:CMSInitiatingOccupancyFraction={점유 비율}`: Old 영역이 설정 점유 비율(%) 차오르면 GC 주기를 시작
+  * `-XX:CMSInitiatingOccupancyFraction={점유 비율}`: Old 영역이 설정 점유 비율(%)을 차오르면 GC 주기를 시작
   * `-XX:+UseCMSInitiatingOccupancyOnly`: GC 통계에 따르지 않고 설정한 CMSInitiatingOccupancyFraction을 기준으로 GC 주기를 시작
   * `-XX:+HeapDumpOnOutOfMemoryErrorOOM`: 에러 발생 시 힙 덤프를 발생시켜주게하는 설정
   * `-XX:HeapDumpPath=/var/lib/elasticsearch`: 힙 덤프를 저장할 경로
@@ -101,8 +101,8 @@
 `${sys:es.logs.base_path}`: Log 설정 디렉토리
 `${sys:es.logs.cluster_name}`: 클러스터 이름  
 `${sys:es.logs.node_name}`: 노드 이름
-`${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}.log`: 클러스터 운영로그 설정  
-`${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_deprecation.log`: Elasticsearch 에서 수행되고 있는 Deprecated 된 기능 정보  
+`${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}.log`: 클러스터 운영 로그 설정  
+`${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_deprecation.log`: Elasticsearch에서 수행되고 있는 Deprecated 된 기능 정보  
 `${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_search_slowlog.log`: 인덱스 검색 슬로우 로그 정보  
 `${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_index_indexing_slowlog.log`: 인덱스 인덱싱 슬로우 로그 정보  
 `${sys:es.logs.base_path}${sys:file.separator}${sys:es.logs.cluster_name}_access.log`: X-Pack auditing 로그 정보  
