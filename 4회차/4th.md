@@ -225,8 +225,8 @@
     * 운영 중인 클러스터의 셋팅 정보 확인이나 온라인으로 클러스터 설정을 변경할 수 있는 API로 자주 변경할 여지가 있는 사항은 Cluster API(`_cluster`)로 진행
 * Cluster API의 모드 
     * `Transient` 모드: Full cluster `restart` 시 리셋되는 설정 (memory 설정)
-    * `Persistent` 모드: 사용자가 변경하지 않으면 영구적으로 보존되는 설정 (disk 설정)
-        cf) elasticsearch.yml -> Persistent -> Transient 순서로 클러스터 설정의 높은 우선순위를 가짐
+    * `Persistent` 모드: 사용자가 변경하지 않으면 영구적으로 보존되는 설정 (disk 설정)  
+      cf) elasticsearch.yml -> Persistent -> Transient 순서로 클러스터 설정의 높은 우선순위를 가짐
 * 클러스터 세팅 확인하기
     * GET 메소드 이용  
     `GET _cluster/settings`
