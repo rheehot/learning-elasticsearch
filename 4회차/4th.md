@@ -239,7 +239,7 @@
         "transient" : "{설정}"
     }
     ```
-* 클러스터 셋팅 고급 기술
+* 클러스터 셋팅 고급 기술  
     a. 클러스터 셋팅 초기화
     ```json
     PUT _cluster/settings 
