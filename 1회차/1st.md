@@ -210,7 +210,7 @@ yum install -y java-1.8.0-openjdk-devel.x86_64
     cluster.name: alan-cluster
 
     # Node
-    node.name: alan-es-master-1
+    node.name: alan-es-data-1
 
     # Paths
     path.data: /var/lib/elasticsearch
